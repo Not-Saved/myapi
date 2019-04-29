@@ -21,6 +21,5 @@ public class MyapiApplication {
             userRepo.save(new User("Loris", encoder.encode("Loris")));
             userRepo.save(new User("Sabrina", encoder.encode("Sabrina")));
         };
-
     }
 }

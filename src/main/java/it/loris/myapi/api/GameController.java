@@ -1,7 +1,6 @@
 package it.loris.myapi.api;
 
 import it.loris.myapi.entities.Game;
-import it.loris.myapi.entities.Move;
 import it.loris.myapi.entities.Player;
 import it.loris.myapi.entities.User;
 import it.loris.myapi.repositories.GameRepository;
@@ -65,7 +64,7 @@ public class GameController {
         return HttpStatus.BAD_REQUEST;
     }
 
-    public void saveDetails(User user, Game game, Color color){
+    private void saveDetails(User user, Game game, Color color){
         User myUser = userRepo.findById(user.getId()).get();
         Player player = new Player(myUser.getUsername(), color);
         player.setUser(myUser);
