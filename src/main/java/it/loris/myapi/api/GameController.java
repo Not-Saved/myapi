@@ -1,8 +1,8 @@
 package it.loris.myapi.api;
 
+import it.loris.myapi.entities.Users;
 import it.loris.myapi.entities.Game;
 import it.loris.myapi.entities.Player;
-import it.loris.myapi.entities.User;
 import it.loris.myapi.repositories.GameRepository;
 import it.loris.myapi.repositories.MoveRepository;
 import it.loris.myapi.repositories.PlayerRepository;
@@ -45,29 +45,29 @@ public class GameController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public void postGame(@RequestParam(value="color") Color color, @AuthenticationPrincipal User user){
+    public void postGame(@RequestParam(value="color") Color color, @AuthenticationPrincipal Users users){
         Game game = new Game();
         game.setCreatedAt(new Date());
-        saveDetails(user, game, color);
+        saveDetails(users, game, color);
     }
 
     @PostMapping("/{id}")
-    public HttpStatus postPlayer(@PathVariable("id") Long id, @RequestParam(value="color") Color color, @AuthenticationPrincipal User user){
+    public HttpStatus postPlayer(@PathVariable("id") Long id, @RequestParam(value="color") Color color, @AuthenticationPrincipal Users users){
         if(gameRepo.findById(id).isPresent()){
             Game game = gameRepo.findById(id).get();
-            User myUser = userRepo.findById(user.getId()).get();
-            if(game.getPlayers().stream().noneMatch(p -> p.getColor() == color || p.getUser() == myUser)){
-                saveDetails(user, game, color);
+            Users myUser = userRepo.findById(users.getId()).get();
+            if(game.getPlayers().stream().noneMatch(p -> p.getColor() == color || p.getUsers() == myUser)){
+                saveDetails(users, game, color);
                 return HttpStatus.ACCEPTED;
             }
         }
         return HttpStatus.BAD_REQUEST;
     }
 
-    private void saveDetails(User user, Game game, Color color){
-        User myUser = userRepo.findById(user.getId()).get();
+    private void saveDetails(Users users, Game game, Color color){
+        Users myUser = userRepo.findById(users.getId()).get();
         Player player = new Player(myUser.getUsername(), color);
-        player.setUser(myUser);
+        player.setUsers(myUser);
         player.setGame(game);
         myUser.getGames().add(game);
         playerRepo.save(player);

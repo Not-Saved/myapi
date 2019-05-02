@@ -1,9 +1,9 @@
 package it.loris.myapi.api;
 
+import it.loris.myapi.entities.Users;
 import it.loris.myapi.entities.Game;
 import it.loris.myapi.entities.Move;
 import it.loris.myapi.entities.Player;
-import it.loris.myapi.entities.User;
 import it.loris.myapi.repositories.GameRepository;
 import it.loris.myapi.repositories.MoveRepository;
 import it.loris.myapi.repositories.PlayerRepository;
@@ -37,8 +37,8 @@ public class MoveController {
     }
 
     @PostMapping(path = "/{id}/move")
-    public HttpStatus postMove(@PathVariable("id") Long id, @RequestParam(value="move") String moveName, @AuthenticationPrincipal User user){
-        User myUser = userRepo.findById(user.getId()).get();
+    public HttpStatus postMove(@PathVariable("id") Long id, @RequestParam(value="move") String moveName, @AuthenticationPrincipal Users users){
+        Users myUser = userRepo.findById(users.getId()).get();
         Game game = gameRepo.findById(id).get();
         Optional<Player> player = game.getPlayers().stream().filter(myUser.getPlayers()::contains).findFirst();
         if (player.isPresent()) {

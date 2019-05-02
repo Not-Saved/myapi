@@ -1,6 +1,6 @@
 package it.loris.myapi.security;
 
-import it.loris.myapi.entities.User;
+import it.loris.myapi.entities.Users;
 import it.loris.myapi.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -20,10 +20,10 @@ public class MyUserDetailsService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        User user = userRepo.findByUsername(username);
-        if(user != null){
-            return user;
+        Users users = userRepo.findByUsername(username);
+        if(users != null){
+            return users;
         }
-        throw new UsernameNotFoundException("User '" + username + "' not found");
+        throw new UsernameNotFoundException("Users '" + username + "' not found");
     }
 }

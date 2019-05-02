@@ -1,6 +1,6 @@
 package it.loris.myapi.api;
 
-import it.loris.myapi.entities.User;
+import it.loris.myapi.entities.Users;
 import it.loris.myapi.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -23,9 +23,9 @@ public class UserController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<User> tacoById(@PathVariable("id") Long id, @AuthenticationPrincipal User user) {
-        Optional<User> optUser = userRepo.findById(id);
-        if (optUser.isPresent() && user.getId() == id) {
+    public ResponseEntity<Users> tacoById(@PathVariable("id") Long id, @AuthenticationPrincipal Users users) {
+        Optional<Users> optUser = userRepo.findById(id);
+        if (optUser.isPresent() && users.getId() == id) {
             return new ResponseEntity<>(optUser.get(), HttpStatus.FOUND);
         }
         return new ResponseEntity<>(HttpStatus.BAD_REQUEST);

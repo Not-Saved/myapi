@@ -1,6 +1,6 @@
 package it.loris.myapi;
 
-import it.loris.myapi.entities.User;
+import it.loris.myapi.entities.Users;
 import it.loris.myapi.repositories.UserRepository;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
@@ -18,8 +18,10 @@ public class MyapiApplication {
     @Bean
     public CommandLineRunner dataLoader(UserRepository userRepo, PasswordEncoder encoder){
         return args -> {
-            userRepo.save(new User("Loris", encoder.encode("Loris")));
-            userRepo.save(new User("Sabrina", encoder.encode("Sabrina")));
+            if (!userRepo.findById((long)1).isPresent()) {
+                userRepo.save(new Users("Loris", encoder.encode("Loris")));
+                userRepo.save(new Users("Sabrina", encoder.encode("Sabrina")));
+            }
         };
     }
 }

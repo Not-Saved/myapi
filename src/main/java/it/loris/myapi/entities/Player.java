@@ -13,7 +13,7 @@ import java.util.List;
 public class Player {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY )
     private Long id;
 
     private final String username;
@@ -22,7 +22,7 @@ public class Player {
 
     @ManyToOne(cascade = CascadeType.ALL)
     @JsonIgnore
-    private User user;
+    private Users users;
 
     @ManyToOne(cascade = CascadeType.ALL)
     @JsonIgnore
