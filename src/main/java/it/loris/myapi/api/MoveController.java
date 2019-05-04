@@ -13,6 +13,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Date;
 import java.util.Optional;
 
 @RestController
@@ -37,16 +38,18 @@ public class MoveController {
     }
 
     @PostMapping(path = "/{id}/move")
-    public HttpStatus postMove(@PathVariable("id") Long id, @RequestParam(value="move") String moveName, @AuthenticationPrincipal Users users){
+    public HttpStatus postMove(@PathVariable("id") Long id, @RequestParam(value="from") String movingFrom, @RequestParam(value="to") String movingTo, @AuthenticationPrincipal Users users){
         Users myUser = userRepo.findById(users.getId()).get();
         Game game = gameRepo.findById(id).get();
         Optional<Player> player = game.getPlayers().stream().filter(myUser.getPlayers()::contains).findFirst();
         if (player.isPresent()) {
             if (checkTurn(game) == player.get().getColor()){
-                Move move = new Move(player.get(), game, moveName);
-                game.getMoves().add(move);
-                moveRepo.save(move);
-                return HttpStatus.CREATED;
+                if(movingFrom.matches("[a-h][1-8]") && movingTo.matches("[a-h][1-8]")) {
+                    Move move = new Move(player.get(), game, new Date(), movingFrom, movingTo);
+                    game.getMoves().add(move);
+                    moveRepo.save(move);
+                    return HttpStatus.CREATED;
+                }
             }
         }
         return HttpStatus.BAD_REQUEST;

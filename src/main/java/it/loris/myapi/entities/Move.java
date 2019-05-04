@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 
 import javax.persistence.*;
+import java.util.Date;
 
 @Entity
 @Data
@@ -25,5 +26,8 @@ public class Move {
     @JsonIgnore
     private final Game game;
 
-    private final String name;
+    private final Date createdAt;
+
+    private final String movingFrom;
+    private final String movingTo;
 }
