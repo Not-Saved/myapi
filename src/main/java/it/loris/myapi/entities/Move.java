@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 
 import javax.persistence.*;
+import java.util.Date;
 
 @Entity
 @Data
@@ -15,7 +16,7 @@ import javax.persistence.*;
 public class Move {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY )
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private Long id;
 
     @ManyToOne(cascade = CascadeType.ALL)
@@ -25,5 +26,7 @@ public class Move {
     @JsonIgnore
     private final Game game;
 
-    private final String name;
+    private final Date createdAt = new Date();
+    private final String movingFrom;
+    private final String movingTo;
 }

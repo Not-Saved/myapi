@@ -1,15 +1,16 @@
 package it.loris.myapi.api;
 
-import it.loris.myapi.entities.Users;
 import it.loris.myapi.entities.Game;
 import it.loris.myapi.entities.Move;
 import it.loris.myapi.entities.Player;
+import it.loris.myapi.entities.Users;
 import it.loris.myapi.repositories.GameRepository;
 import it.loris.myapi.repositories.MoveRepository;
 import it.loris.myapi.repositories.PlayerRepository;
 import it.loris.myapi.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
@@ -32,21 +33,29 @@ public class MoveController {
     }
 
     @GetMapping(path = "/{id}/move")
-    public Iterable<Move> getAllMoves(@PathVariable("id") Long id) {
-        return gameRepo.findById(id).get().getMoves();
+    public ResponseEntity<Iterable<Move>> getAllMoves(@PathVariable("id") Long id) {
+        if(gameRepo.findById(id).isPresent()) {
+            return new ResponseEntity<>(gameRepo.findById(id).get().getMoves(), HttpStatus.FOUND);
+        }
+        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     }
 
     @PostMapping(path = "/{id}/move")
-    public HttpStatus postMove(@PathVariable("id") Long id, @RequestParam(value="move") String moveName, @AuthenticationPrincipal Users users){
+    public HttpStatus postMove(@PathVariable("id") Long id, @RequestParam(value="from") String movingFrom, @RequestParam(value="to") String movingTo, @AuthenticationPrincipal Users users){
         Users myUser = userRepo.findById(users.getId()).get();
-        Game game = gameRepo.findById(id).get();
-        Optional<Player> player = game.getPlayers().stream().filter(myUser.getPlayers()::contains).findFirst();
-        if (player.isPresent()) {
-            if (checkTurn(game) == player.get().getColor()){
-                Move move = new Move(player.get(), game, moveName);
-                game.getMoves().add(move);
-                moveRepo.save(move);
-                return HttpStatus.CREATED;
+        Optional<Game> gameOpt = gameRepo.findById(id);
+        if(gameOpt.isPresent()) {
+            Game game = gameOpt.get();
+            Optional<Player> player = game.getPlayers().stream().filter(myUser.getPlayers()::contains).findFirst();
+            if (player.isPresent()) {
+                if (checkTurn(game) == player.get().getColor() && game.isInProgress()) {
+                    if (movingFrom.matches("[a-h][1-8]") && movingTo.matches("[a-h][1-8]")) {
+                        Move move = new Move(player.get(),game, movingFrom, movingTo);
+                        game.getMoves().add(move);
+                        moveRepo.save(move);
+                        return HttpStatus.CREATED;
+                    }
+                }
             }
         }
         return HttpStatus.BAD_REQUEST;

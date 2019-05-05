@@ -19,9 +19,15 @@ public class MyapiApplication {
     public CommandLineRunner dataLoader(UserRepository userRepo, PasswordEncoder encoder){
         return args -> {
             if (!userRepo.findById((long)1).isPresent()) {
-                userRepo.save(new Users("Loris", encoder.encode("Loris")));
-                userRepo.save(new Users("Sabrina", encoder.encode("Sabrina")));
+                Users loris = new Users("loris", encoder.encode("sirol"));
+                loris.setRole("ADMIN");
+                userRepo.save(loris);
+                Users sabrina = new Users("sabrina", encoder.encode("sabrina"));
+                sabrina.setRole("USER");
+                userRepo.save(sabrina);
             }
         };
     }
+
+
 }
