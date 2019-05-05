@@ -15,7 +15,6 @@ public class MyapiApplication {
         SpringApplication.run(MyapiApplication.class, args);
     }
 
-
     @Bean
     public CommandLineRunner dataLoader(UserRepository userRepo, PasswordEncoder encoder){
         return args -> {
