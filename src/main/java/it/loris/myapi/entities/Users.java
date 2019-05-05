@@ -22,11 +22,12 @@ import java.util.List;
 public class Users implements UserDetails {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY )
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private Long id;
 
     private final String username;
     private final String password;
+    private String role;
 
     @OneToMany(mappedBy = "users")
     @JsonIgnore
@@ -38,6 +39,9 @@ public class Users implements UserDetails {
     @Override
     @JsonIgnore
     public Collection<? extends GrantedAuthority> getAuthorities() {
+        if(this.getRole().equalsIgnoreCase("ADMIN")){
+            return Arrays.asList(new SimpleGrantedAuthority("ROLE_USER"), new SimpleGrantedAuthority("ROLE_" + role.toUpperCase()));
+        }
         return Arrays.asList(new SimpleGrantedAuthority("ROLE_USER"));
     }
 
@@ -64,4 +68,5 @@ public class Users implements UserDetails {
     public boolean isEnabled() {
         return true;
     }
+
 }

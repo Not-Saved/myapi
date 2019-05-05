@@ -1,18 +1,18 @@
 package it.loris.myapi.api;
 
-import it.loris.myapi.entities.Users;
 import it.loris.myapi.entities.Game;
 import it.loris.myapi.entities.Player;
+import it.loris.myapi.entities.Users;
 import it.loris.myapi.repositories.GameRepository;
 import it.loris.myapi.repositories.MoveRepository;
 import it.loris.myapi.repositories.PlayerRepository;
 import it.loris.myapi.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Date;
 import java.util.Optional;
 
 import static it.loris.myapi.entities.Player.Color;
@@ -39,15 +39,17 @@ public class GameController {
     }
 
     @GetMapping(path="/{id}", produces = "application/json")
-    public Optional<Game> getGame(@PathVariable("id") Long id){
-        return gameRepo.findById(id);
+    public ResponseEntity<Optional<Game>> getGame(@PathVariable("id") Long id){
+        if(gameRepo.findById(id).isPresent()){
+            return new ResponseEntity<>(gameRepo.findById(id), HttpStatus.FOUND);
+        }
+        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     }
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public void postGame(@RequestParam(value="color") Color color, @AuthenticationPrincipal Users users){
         Game game = new Game();
-        game.setCreatedAt(new Date());
         saveDetails(users, game, color);
     }
 

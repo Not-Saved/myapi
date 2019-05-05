@@ -12,10 +12,10 @@ import java.util.List;
 public class Game {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY )
+    @GeneratedValue(strategy = GenerationType.SEQUENCE )
     private Long id;
 
-    private Date createdAt;
+    private final Date createdAt = new Date();
 
     @OneToMany(mappedBy = "game")
     private List<Player> players = new ArrayList<>();

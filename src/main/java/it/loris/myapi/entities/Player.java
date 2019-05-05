@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 
 import javax.persistence.*;
+import java.util.Date;
 import java.util.List;
 
 @Data
@@ -13,11 +14,11 @@ import java.util.List;
 public class Player {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY )
+    @GeneratedValue(strategy = GenerationType.SEQUENCE )
     private Long id;
 
+    private final Date createdAt = new Date();
     private final String username;
-
     private final Color color;
 
     @ManyToOne(cascade = CascadeType.ALL)

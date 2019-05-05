@@ -10,6 +10,7 @@ import it.loris.myapi.repositories.PlayerRepository;
 import it.loris.myapi.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
@@ -33,22 +34,27 @@ public class MoveController {
     }
 
     @GetMapping(path = "/{id}/move")
-    public Iterable<Move> getAllMoves(@PathVariable("id") Long id) {
-        return gameRepo.findById(id).get().getMoves();
+    public ResponseEntity<Iterable<Move>> getAllMoves(@PathVariable("id") Long id) {
+        if(gameRepo.findById(id).isPresent()) {
+            return new ResponseEntity<>(gameRepo.findById(id).get().getMoves(), HttpStatus.FOUND);
+        }
+        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     }
 
     @PostMapping(path = "/{id}/move")
     public HttpStatus postMove(@PathVariable("id") Long id, @RequestParam(value="from") String movingFrom, @RequestParam(value="to") String movingTo, @AuthenticationPrincipal Users users){
         Users myUser = userRepo.findById(users.getId()).get();
-        Game game = gameRepo.findById(id).get();
-        Optional<Player> player = game.getPlayers().stream().filter(myUser.getPlayers()::contains).findFirst();
-        if (player.isPresent()) {
-            if (checkTurn(game) == player.get().getColor()){
-                if(movingFrom.matches("[a-h][1-8]") && movingTo.matches("[a-h][1-8]")) {
-                    Move move = new Move(player.get(), game, new Date(), movingFrom, movingTo);
-                    game.getMoves().add(move);
-                    moveRepo.save(move);
-                    return HttpStatus.CREATED;
+        if(gameRepo.findById(id).isPresent()) {
+            Game game = gameRepo.findById(id).get();
+            Optional<Player> player = game.getPlayers().stream().filter(myUser.getPlayers()::contains).findFirst();
+            if (player.isPresent()) {
+                if (checkTurn(game) == player.get().getColor()) {
+                    if (movingFrom.matches("[a-h][1-8]") && movingTo.matches("[a-h][1-8]")) {
+                        Move move = new Move(player.get(), game, movingFrom, movingTo);
+                        game.getMoves().add(move);
+                        moveRepo.save(move);
+                        return HttpStatus.CREATED;
+                    }
                 }
             }
         }

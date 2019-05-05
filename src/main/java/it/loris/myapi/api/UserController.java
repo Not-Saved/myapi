@@ -38,7 +38,9 @@ public class UserController {
     @PostMapping
     public HttpStatus registerUser(@PathParam(value="username") String username, @PathParam(value = "password") String password){
         if(!userRepo.findByUsername(username.toLowerCase()).isPresent()){
-            userRepo.save(new Users(username.toLowerCase(), encoder.encode(password)));
+            Users users = new Users(username.toLowerCase(), encoder.encode(password));
+            users.setRole("USER");
+            userRepo.save(users);
             return HttpStatus.CREATED;
         }
         return HttpStatus.BAD_REQUEST;
