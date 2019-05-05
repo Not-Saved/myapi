@@ -1,7 +1,10 @@
 package it.loris.myapi.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import lombok.*;
+import lombok.AccessLevel;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.RequiredArgsConstructor;
 
 import javax.persistence.*;
 import java.util.Date;
@@ -21,11 +24,11 @@ public class Player {
     private final String username;
     private final Color color;
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne(cascade = CascadeType.MERGE)
     @JsonIgnore
     private Users users;
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne(cascade = CascadeType.MERGE)
     @JsonIgnore
     private Game game;
 
@@ -33,7 +36,5 @@ public class Player {
     @JsonIgnore
     private List<Move> moves;
 
-    public enum Color{
-        WHITE, BLACK;
-    }
+    public enum Color{WHITE, BLACK}
 }

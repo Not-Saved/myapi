@@ -16,10 +16,11 @@ public class Game {
     private Long id;
 
     private final Date createdAt = new Date();
+    private boolean inProgress;
 
-    @OneToMany(mappedBy = "game")
+    @OneToMany(mappedBy = "game", orphanRemoval = true)
     private List<Player> players = new ArrayList<>();
 
-    @OneToMany
+    @OneToMany(cascade = CascadeType.ALL)
     private List<Move> moves;
 }

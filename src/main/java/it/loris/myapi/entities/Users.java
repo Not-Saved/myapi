@@ -29,12 +29,9 @@ public class Users implements UserDetails {
     private final String password;
     private String role;
 
-    @OneToMany(mappedBy = "users")
+    @OneToMany(mappedBy = "users", orphanRemoval = true)
     @JsonIgnore
     private List<Player> players = new ArrayList<>();
-
-    @ManyToMany(cascade = CascadeType.ALL)
-    private List<Game> games = new ArrayList<>();
 
     @Override
     @JsonIgnore

@@ -50,6 +50,7 @@ public class GameController {
     @ResponseStatus(HttpStatus.CREATED)
     public void postGame(@RequestParam(value="color") Color color, @AuthenticationPrincipal Users users){
         Game game = new Game();
+        game.setInProgress(true);
         saveDetails(users, game, color);
     }
 
@@ -66,12 +67,21 @@ public class GameController {
         return HttpStatus.BAD_REQUEST;
     }
 
+    @DeleteMapping("/{id}")
+    public HttpStatus deleteGame(@PathVariable("id") Long id){
+        if(gameRepo.findById(id).isPresent()){
+            gameRepo.delete(gameRepo.findById(id).get());
+            return HttpStatus.OK;
+        }
+        return HttpStatus.NOT_FOUND;
+    }
+
     private void saveDetails(Users users, Game game, Color color){
         Users myUser = userRepo.findById(users.getId()).get();
         Player player = new Player(myUser.getUsername(), color);
         player.setUsers(myUser);
         player.setGame(game);
-        myUser.getGames().add(game);
+        gameRepo.save(game);
         playerRepo.save(player);
     }
 }
