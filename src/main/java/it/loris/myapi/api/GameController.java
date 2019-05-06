@@ -1,5 +1,6 @@
 package it.loris.myapi.api;
 
+import it.loris.myapi.enums.Color;
 import it.loris.myapi.entities.Game;
 import it.loris.myapi.entities.Player;
 import it.loris.myapi.entities.Users;
@@ -14,8 +15,6 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Optional;
-
-import static it.loris.myapi.entities.Player.Color;
 
 @RestController
 @RequestMapping(path = "/game", produces = "application/json")
