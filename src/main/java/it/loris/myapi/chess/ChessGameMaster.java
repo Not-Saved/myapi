@@ -85,17 +85,24 @@ public class ChessGameMaster {
 	
 	private static Board enPassant(Board board, Square movingFrom, Square movingTo) {
 		Square enPassant;
+		int rankEnPassant;
 		switch (movingFrom.piece.color) {
 		case WHITE: 
 			enPassant = board.getPosition(arrayAdd(movingTo.position.toArray(), array(0, -1)));
+			rankEnPassant = 4;
 			break;
 		case BLACK: 
 			enPassant = board.getPosition(arrayAdd(movingTo.position.toArray(), array(0, +1)));
+			rankEnPassant = 3;
 			break;
 		default: 
 			throw new IllegalStateException("???");
 		}
-		if (board.contains(enPassant) && enPassant.piece.color != movingFrom.piece.color) {
+		if (board.contains(enPassant)
+				&& enPassant.piece.color != movingFrom.piece.color
+				&& enPassant.piece.moveCount == 1
+				&& movingFrom.position.y == rankEnPassant
+				&& Math.abs(enPassant.position.x - movingFrom.position.x) == 1) {
 			return board.moveAndReplace(movingFrom, movingTo).remove(enPassant);
 		}	
 		else {
