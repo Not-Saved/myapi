@@ -1,6 +1,7 @@
 package it.loris.myapi.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import it.loris.myapi.enums.MoveType;
 import lombok.AccessLevel;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -27,6 +28,8 @@ public class Move {
     private final Game game;
 
     private final Date createdAt = new Date();
+    private MoveType moveType;
     private final String movingFrom;
     private final String movingTo;
+
 }

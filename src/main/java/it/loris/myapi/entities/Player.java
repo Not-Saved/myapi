@@ -1,6 +1,7 @@
 package it.loris.myapi.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import it.loris.myapi.enums.Color;
 import lombok.AccessLevel;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -36,5 +37,4 @@ public class Player {
     @JsonIgnore
     private List<Move> moves;
 
-    public enum Color{WHITE, BLACK}
 }

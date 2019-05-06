@@ -18,6 +18,9 @@ public class Game {
     private final Date createdAt = new Date();
     private boolean inProgress;
 
+    @OneToOne(orphanRemoval = true)
+    private Player winner;
+
     @OneToMany(mappedBy = "game", orphanRemoval = true)
     private List<Player> players = new ArrayList<>();
 

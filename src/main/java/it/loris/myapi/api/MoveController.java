@@ -1,5 +1,7 @@
 package it.loris.myapi.api;
 
+import it.loris.myapi.enums.Color;
+import it.loris.myapi.chess.ChessGame;
 import it.loris.myapi.entities.Game;
 import it.loris.myapi.entities.Move;
 import it.loris.myapi.entities.Player;
@@ -8,6 +10,7 @@ import it.loris.myapi.repositories.GameRepository;
 import it.loris.myapi.repositories.MoveRepository;
 import it.loris.myapi.repositories.PlayerRepository;
 import it.loris.myapi.repositories.UserRepository;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,6 +19,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.Optional;
 
+@Slf4j
 @RestController
 @RequestMapping(path = "/game", produces = "application/json")
 @CrossOrigin("*")
@@ -48,9 +52,15 @@ public class MoveController {
             Game game = gameOpt.get();
             Optional<Player> player = game.getPlayers().stream().filter(myUser.getPlayers()::contains).findFirst();
             if (player.isPresent()) {
-                if (checkTurn(game) == player.get().getColor() && game.isInProgress()) {
+                if (checkTurn(game) == player.get().getColor() && game.isInProgress() && game.getPlayers().size() == 2) {
                     if (movingFrom.matches("[a-h][1-8]") && movingTo.matches("[a-h][1-8]")) {
-                        Move move = new Move(player.get(),game, movingFrom, movingTo);
+                        Move move = new Move(player.get(), game, movingFrom, movingTo);
+                        try{
+                            ChessGame.advanceGame(game, move);
+                        } catch (IllegalArgumentException exc){
+                            log.info(exc.getMessage());
+                            return HttpStatus.BAD_REQUEST;
+                        }
                         game.getMoves().add(move);
                         moveRepo.save(move);
                         return HttpStatus.CREATED;
@@ -61,10 +71,10 @@ public class MoveController {
         return HttpStatus.BAD_REQUEST;
     }
 
-    private Player.Color checkTurn(Game game){
+    private Color checkTurn(Game game){
         switch (game.getMoves().size()%2){
-            case 0: return Player.Color.WHITE;
-            default: return Player.Color.BLACK;
+            case 0: return Color.WHITE;
+            default: return Color.BLACK;
         }
     }
 }
