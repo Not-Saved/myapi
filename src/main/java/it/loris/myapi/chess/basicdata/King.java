@@ -22,7 +22,7 @@ public class King extends Piece {
 
 	@Override
 	public boolean legalMove(int[] move) {
-		return(!(isStraight(move) && !isDiagonal(move)) || squareDistance(move)>1);
+		return((isStraight(move) || isDiagonal(move)) && squareDistance(move) == 1);
 	}
 
 	@Override
