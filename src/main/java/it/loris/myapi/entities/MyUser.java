@@ -19,17 +19,20 @@ import java.util.List;
 @Data
 @NoArgsConstructor(access= AccessLevel.PRIVATE, force=true)
 @RequiredArgsConstructor
-public class Users implements UserDetails {
+public class MyUser implements UserDetails {
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private Long id;
 
     private final String username;
+
+    @JsonIgnore
     private final String password;
+
     private String role;
 
-    @OneToMany(mappedBy = "users", orphanRemoval = true)
+    @OneToMany(mappedBy = "playerUser", orphanRemoval = true)
     @JsonIgnore
     private List<Player> players = new ArrayList<>();
 

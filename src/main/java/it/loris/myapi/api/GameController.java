@@ -1,23 +1,28 @@
 package it.loris.myapi.api;
 
-import it.loris.myapi.enums.Color;
 import it.loris.myapi.entities.Game;
+import it.loris.myapi.entities.MyUser;
 import it.loris.myapi.entities.Player;
-import it.loris.myapi.entities.Users;
 import it.loris.myapi.repositories.GameRepository;
 import it.loris.myapi.repositories.MoveRepository;
 import it.loris.myapi.repositories.PlayerRepository;
 import it.loris.myapi.repositories.UserRepository;
+import it.loris.myapi.util.Color;
+import it.loris.myapi.util.IllegalRequestParamException;
+import it.loris.myapi.util.ResourceNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.oauth2.common.exceptions.UnauthorizedUserException;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @RestController
-@RequestMapping(path = "/game", produces = "application/json")
+@RequestMapping(path = "/**/game", produces = "application/json")
 @CrossOrigin("*")
 public class GameController {
 
@@ -32,55 +37,70 @@ public class GameController {
         this.playerRepo = playerRepo;
     }
 
-    @GetMapping(produces="application/json")
-    public Iterable<Game> getAllGames(){
-        return gameRepo.findAll();
+    @GetMapping
+    public ResponseEntity<Object> getAllGames(){
+        return new ResponseEntity<>(gameRepo.findAll(), HttpStatus.FOUND);
     }
 
-    @GetMapping(path="/{id}", produces = "application/json")
-    public ResponseEntity<Optional<Game>> getGame(@PathVariable("id") Long id){
+    @GetMapping(path="/{id}")
+    public ResponseEntity<Object> getGame(@PathVariable("id") Long id){
         if(gameRepo.findById(id).isPresent()){
             return new ResponseEntity<>(gameRepo.findById(id), HttpStatus.FOUND);
         }
-        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        throw new ResourceNotFoundException("Game with id: " +id+ " not found");
     }
 
     @PostMapping
-    @ResponseStatus(HttpStatus.CREATED)
-    public void postGame(@RequestParam(value="color") Color color, @AuthenticationPrincipal Users users){
-        Game game = new Game();
-        game.setInProgress(true);
-        saveDetails(users, game, color);
+    public ResponseEntity<Object> postGame(@RequestParam(value="color") Color color, @AuthenticationPrincipal MyUser myUser){
+        if(playerRepo.findByPlayerUserId(myUser.getId()).stream()
+                .map(p -> p.getGame())
+                .filter(p -> p.isInProgress())
+                .count() <= 10){
+            Game game = new Game();
+            game.setInProgress(false);
+            MyUser user = userRepo.findById(myUser.getId()).get();
+            Player player = new Player(myUser.getUsername(), user, game);
+            player.setColor(color);
+            saveDetails(player, game);
+            return new ResponseEntity<>(game, HttpStatus.CREATED);
+        }
+       return new ResponseEntity<>(new UnauthorizedUserException("User: " +myUser.getUsername()+ " is already participating in 10 games"),
+               HttpStatus.UNAUTHORIZED);
     }
 
     @PostMapping("/{id}")
-    public HttpStatus postPlayer(@PathVariable("id") Long id, @RequestParam(value="color") Color color, @AuthenticationPrincipal Users users){
+    public ResponseEntity<Object> postPlayer(@PathVariable("id") Long id, @AuthenticationPrincipal MyUser myUser){
+        Optional<Game> optGame = gameRepo.findById(id);
+        MyUser user = userRepo.findById(myUser.getId()).get();
         if(gameRepo.findById(id).isPresent()){
-            Game game = gameRepo.findById(id).get();
-            Users myUser = userRepo.findById(users.getId()).get();
-            if(game.getPlayers().stream().noneMatch(p -> p.getColor() == color || p.getUsers() == myUser)){
-                saveDetails(users, game, color);
-                return HttpStatus.ACCEPTED;
+            Game game = optGame.get();
+            if(game.getAllPlayers().stream().filter(Objects::nonNull).count() >= 2){
+                throw new IllegalRequestParamException("game: " +game.getId()+ " is already full");
             }
+            if (game.getAllPlayers().stream().anyMatch(user.getPlayers()::contains)) {
+                throw new IllegalRequestParamException("User is already participating in game: " +game.getId());
+            }
+            game.setInProgress(true);
+            Player player = new Player(myUser.getUsername(), user, game);
+            saveDetails(player, game);
+            return new ResponseEntity<>(game, HttpStatus.ACCEPTED);
         }
-        return HttpStatus.BAD_REQUEST;
+        throw new ResourceNotFoundException("Game with id: " +id+ " not found");
     }
 
     @DeleteMapping("/{id}")
-    public HttpStatus deleteGame(@PathVariable("id") Long id){
+    public ResponseEntity<Object> deleteGame(@PathVariable("id") Long id){
         if(gameRepo.findById(id).isPresent()){
             gameRepo.delete(gameRepo.findById(id).get());
-            return HttpStatus.OK;
+            return new ResponseEntity<>(HttpStatus.ACCEPTED);
         }
-        return HttpStatus.NOT_FOUND;
+        throw new ResourceNotFoundException("Game with id: " +id+ " not found");
     }
 
-    private void saveDetails(Users users, Game game, Color color){
-        Users myUser = userRepo.findById(users.getId()).get();
-        Player player = new Player(myUser.getUsername(), color);
-        player.setUsers(myUser);
-        player.setGame(game);
+    private void saveDetails(Player player, Game game){
+        game.setRightPlayer(player);
         gameRepo.save(game);
         playerRepo.save(player);
     }
 }
+

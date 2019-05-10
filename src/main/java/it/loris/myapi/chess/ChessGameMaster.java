@@ -1,6 +1,6 @@
 package it.loris.myapi.chess;
 
-import it.loris.myapi.enums.MoveType;
+import it.loris.myapi.util.MoveType;
 import it.loris.myapi.chess.basicdata.Queen;
 import it.loris.myapi.entities.Move;
 

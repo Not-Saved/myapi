@@ -1,6 +1,6 @@
 package it.loris.myapi.chess.basicdata;
 
-import it.loris.myapi.enums.Color;
+import it.loris.myapi.util.Color;
 
 import static it.loris.myapi.chess.util.MyMath.*;
 
@@ -22,7 +22,7 @@ public class King extends Piece {
 
 	@Override
 	public boolean legalMove(int[] move) {
-		return(!(isStraight(move) && !isDiagonal(move)) || squareDistance(move)>1);
+		return((isStraight(move) || isDiagonal(move)) && squareDistance(move) == 1);
 	}
 
 	@Override

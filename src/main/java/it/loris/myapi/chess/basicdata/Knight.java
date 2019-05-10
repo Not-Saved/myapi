@@ -1,6 +1,6 @@
 package it.loris.myapi.chess.basicdata;
 
-import it.loris.myapi.enums.Color;
+import it.loris.myapi.util.Color;
 
 import java.util.Arrays;
 
