@@ -49,17 +49,20 @@ public class GameController {
     }
 
     @PostMapping
-    public ResponseEntity<Object> postGame(@RequestParam(value="color") Color color, @AuthenticationPrincipal MyUser myUser){
+    public ResponseEntity<Object> postGame(@RequestParam(value="color", required = false, defaultValue = "WHITE") Color color, @AuthenticationPrincipal MyUser myUser){
         if(playerRepo.findByPlayerUserId(myUser.getId()).stream()
                 .map(Player::getGame)
-                .filter(Game::isInProgress)
-                .count() <= 10){
+                .filter(p-> p.isInProgress() || p.getMoves().isEmpty())
+                .count() < 10){
             Game game = new Game();
             game.setInProgress(false);
+
             MyUser user = userRepo.findById(myUser.getId()).get();
             Player player = new Player(myUser.getUsername(), user, game);
             player.setColor(color);
-            saveDetails(player, game);
+
+            game.getPlayers().add(player);
+            gameRepo.save(game);
             return new ResponseEntity<>(game, HttpStatus.CREATED);
         }
        throw new UnauthorizedUserException("User is already participating in 10 games");
@@ -71,15 +74,19 @@ public class GameController {
         MyUser user = userRepo.findById(myUser.getId()).get();
         if(gameRepo.findById(id).isPresent()){
             Game game = optGame.get();
-            if(game.getAllPlayers().stream().filter(Objects::nonNull).count() >= 2){
+            if(game.getPlayers().stream().filter(Objects::nonNull).count() >= 2){
                 throw new UnauthorizedUserException("game: " +game.getId()+ " is already full");
             }
-            if (game.getAllPlayers().stream().anyMatch(user.getPlayers()::contains)) {
+            if(game.getPlayers().stream().anyMatch(user.getPlayers()::contains)){
                 throw new UnauthorizedUserException("User is already participating in game " +game.getId());
             }
             game.setInProgress(true);
+
             Player player = new Player(myUser.getUsername(), user, game);
-            saveDetails(player, game);
+            game.setRightPlayer(player);
+            game.getPlayers().add(player);
+
+            gameRepo.save(game);
             return new ResponseEntity<>(game, HttpStatus.ACCEPTED);
         }
         throw new ResourceNotFoundException("Game " +id+ " not found");
@@ -92,12 +99,6 @@ public class GameController {
             return new ResponseEntity<>(HttpStatus.ACCEPTED);
         }
         throw new ResourceNotFoundException("Game " +id+ " not found");
-    }
-
-    private void saveDetails(Player player, Game game){
-        game.setRightPlayer(player);
-        gameRepo.save(game);
-        playerRepo.save(player);
     }
 }
 

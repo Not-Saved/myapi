@@ -57,7 +57,7 @@ public class MoveController {
         }
         Game game = gameOpt.get();
 
-        Optional<Player> player = game.getAllPlayers().stream().filter(myUser.getPlayers()::contains).findFirst();
+        Optional<Player> player = game.getPlayers().stream().filter(myUser.getPlayers()::contains).findFirst();
         if (!player.isPresent()) {
             throw new UnauthorizedUserException("User not participating in game " + game.getId());
         }
