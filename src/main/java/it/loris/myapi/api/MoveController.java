@@ -44,7 +44,7 @@ public class MoveController {
         if(gameRepo.findById(id).isPresent()) {
             return new ResponseEntity<>(gameRepo.findById(id).get().getMoves(), HttpStatus.FOUND);
         }
-        throw new ResourceNotFoundException("Game with id: " +id+ " not found");
+        throw new ResourceNotFoundException("Game " +id+ " not found");
     }
 
     @PostMapping(path = "/{id}/move")
@@ -53,22 +53,19 @@ public class MoveController {
         Optional<Game> gameOpt = gameRepo.findById(id);
 
         if (!gameOpt.isPresent()) {
-            throw new ResourceNotFoundException("Game with id: " + id + " not found");
+            throw new ResourceNotFoundException("Game " + id + " not found");
         }
         Game game = gameOpt.get();
 
         Optional<Player> player = game.getAllPlayers().stream().filter(myUser.getPlayers()::contains).findFirst();
         if (!player.isPresent()) {
-            return new ResponseEntity<>(new UnauthorizedUserException("User not participating in game:" + game.getId()),
-                    HttpStatus.UNAUTHORIZED);
+            throw new UnauthorizedUserException("User not participating in game " + game.getId());
         }
         if (!(checkTurn(game) == player.get().getColor())) {
-            return new ResponseEntity<>(new UnauthorizedUserException("Not user: " + player.get().getUsername() + " turn"),
-                    HttpStatus.UNAUTHORIZED);
+            throw new UnauthorizedUserException("Invalid move: can't move during opponent's turn");
         }
         if (!game.isInProgress()) {
-            return new ResponseEntity<>(new UnauthorizedUserException("Game with id: " + id + " not playable"),
-                    HttpStatus.UNAUTHORIZED);
+            throw new UnauthorizedUserException("Game " + id + " not playable");
         }
 
         try{
@@ -79,7 +76,7 @@ public class MoveController {
                 moveRepo.save(move);
                 return new ResponseEntity<>(move, HttpStatus.ACCEPTED);
             }
-            throw new IllegalArgumentException("Invalid move arguments");
+            throw new IllegalArgumentException("Invalid move: illegal move arguments");
         } catch (IllegalArgumentException exc) {
             log.info(exc.getMessage());
             throw new IllegalRequestParamException(exc.getMessage());

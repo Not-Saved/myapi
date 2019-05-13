@@ -5,7 +5,7 @@ public class Position {
 	public final int y;
 		
 	public Position(int x, int y) {
-		if (x<0 || x>7 || y<0 || y>7) throw new IllegalArgumentException("Invalid position!");
+		if (x<0 || x>7 || y<0 || y>7) throw new IllegalArgumentException("Invalid position");
 		this.x=x;
 		this.y=y;
 	}
@@ -16,7 +16,7 @@ public class Position {
 
 	public Position(String name) {
 		this(name.toUpperCase().charAt(0) - 'A', name.toUpperCase().charAt(1) - '1');
-		if (name.length() != 2) throw new IllegalArgumentException("Invalid position!");
+		if (name.length() != 2) throw new IllegalArgumentException("Invalid position");
 	}
 	
 	public int[] toArray() {

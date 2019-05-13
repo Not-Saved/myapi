@@ -24,11 +24,6 @@ public class Game {
     private boolean inProgress;
 
     @Getter
-    @Setter
-    @OneToOne(orphanRemoval = true)
-    private Player winner;
-
-    @Getter
     @OneToOne(cascade = CascadeType.ALL)
     private Player whitePlayer;
 

@@ -2,6 +2,7 @@ package it.loris.myapi.api;
 
 import it.loris.myapi.entities.Game;
 import it.loris.myapi.entities.MyUser;
+import it.loris.myapi.entities.Player;
 import it.loris.myapi.repositories.PlayerRepository;
 import it.loris.myapi.repositories.UserRepository;
 import it.loris.myapi.util.IllegalRequestParamException;
@@ -9,11 +10,10 @@ import it.loris.myapi.util.ResourceNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
-import javax.websocket.server.PathParam;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @RestController
@@ -34,18 +34,27 @@ public class UserController {
     }
 
     @GetMapping
-    public ResponseEntity<Object> getUserById() {
+    public ResponseEntity<Object> getAllUsers() {
         Iterable<MyUser> users = userRepo.findAll();
         return new ResponseEntity<>(users, HttpStatus.FOUND);
     }
 
+    @GetMapping(path = "/{id}")
+    public ResponseEntity<Object> getUserById(@PathVariable("id") Long id) {
+        if(userRepo.findById(id).isPresent()) {
+            Optional<MyUser> users = userRepo.findById(id);
+            return new ResponseEntity<>(users, HttpStatus.FOUND);
+        }
+        throw new ResourceNotFoundException("User " +id+ " not found");
+    }
+
     @GetMapping(path = "/{id}/game")
-    public ResponseEntity<Object> getUsersGames(@PathVariable("id") Long id, @AuthenticationPrincipal MyUser myUser) {
+    public ResponseEntity<Object> getUsersGames(@PathVariable("id") Long id) {
         if(userRepo.findById(id).isPresent()){
-            Iterable<Game> games = playerRepo.findByPlayerUserId(id).stream().map(p -> p.getGame()).collect(Collectors.toList());
+            Iterable<Game> games = playerRepo.findByPlayerUserId(id).stream().map(Player::getGame).collect(Collectors.toList());
             return new ResponseEntity<>(games, HttpStatus.FOUND);
         }
-        throw new ResourceNotFoundException("User with id: " +id+ " not found");
+        throw new ResourceNotFoundException("User " +id+ " not found");
     }
 
     @PostMapping
@@ -56,6 +65,6 @@ public class UserController {
             userRepo.save(myUser);
             return new ResponseEntity<>(myUser, HttpStatus.CREATED);
         }
-        throw new IllegalRequestParamException("User: " +username+ " already exists");
+        throw new IllegalRequestParamException("User with username:  " +username+ " already exists");
     }
 }

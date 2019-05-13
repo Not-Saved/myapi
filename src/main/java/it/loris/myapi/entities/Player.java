@@ -25,6 +25,7 @@ public class Player {
     private final Date createdAt = new Date();
     private final String username;
     private Color color;
+    private boolean winner = false;
 
     @ManyToOne(cascade = CascadeType.MERGE)
     @JsonIgnore

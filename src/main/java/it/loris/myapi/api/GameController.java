@@ -19,7 +19,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.Objects;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping(path = "/**/game", produces = "application/json")
@@ -47,14 +46,14 @@ public class GameController {
         if(gameRepo.findById(id).isPresent()){
             return new ResponseEntity<>(gameRepo.findById(id), HttpStatus.FOUND);
         }
-        throw new ResourceNotFoundException("Game with id: " +id+ " not found");
+        throw new ResourceNotFoundException("Game " +id+ " not found");
     }
 
     @PostMapping
     public ResponseEntity<Object> postGame(@RequestParam(value="color") Color color, @AuthenticationPrincipal MyUser myUser){
         if(playerRepo.findByPlayerUserId(myUser.getId()).stream()
-                .map(p -> p.getGame())
-                .filter(p -> p.isInProgress())
+                .map(Player::getGame)
+                .filter(Game::isInProgress)
                 .count() <= 10){
             Game game = new Game();
             game.setInProgress(false);
@@ -64,8 +63,7 @@ public class GameController {
             saveDetails(player, game);
             return new ResponseEntity<>(game, HttpStatus.CREATED);
         }
-       return new ResponseEntity<>(new UnauthorizedUserException("User: " +myUser.getUsername()+ " is already participating in 10 games"),
-               HttpStatus.UNAUTHORIZED);
+       throw new UnauthorizedUserException("User is already participating in 10 games");
     }
 
     @PostMapping("/{id}")
@@ -75,17 +73,17 @@ public class GameController {
         if(gameRepo.findById(id).isPresent()){
             Game game = optGame.get();
             if(game.getAllPlayers().stream().filter(Objects::nonNull).count() >= 2){
-                throw new IllegalRequestParamException("game: " +game.getId()+ " is already full");
+                throw new UnauthorizedUserException("game: " +game.getId()+ " is already full");
             }
             if (game.getAllPlayers().stream().anyMatch(user.getPlayers()::contains)) {
-                throw new IllegalRequestParamException("User is already participating in game: " +game.getId());
+                throw new UnauthorizedUserException("User is already participating in game " +game.getId());
             }
             game.setInProgress(true);
             Player player = new Player(myUser.getUsername(), user, game);
             saveDetails(player, game);
             return new ResponseEntity<>(game, HttpStatus.ACCEPTED);
         }
-        throw new ResourceNotFoundException("Game with id: " +id+ " not found");
+        throw new ResourceNotFoundException("Game " +id+ " not found");
     }
 
     @DeleteMapping("/{id}")
@@ -94,7 +92,7 @@ public class GameController {
             gameRepo.delete(gameRepo.findById(id).get());
             return new ResponseEntity<>(HttpStatus.ACCEPTED);
         }
-        throw new ResourceNotFoundException("Game with id: " +id+ " not found");
+        throw new ResourceNotFoundException("Game " +id+ " not found");
     }
 
     private void saveDetails(Player player, Game game){
