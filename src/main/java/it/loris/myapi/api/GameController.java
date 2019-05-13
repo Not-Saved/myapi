@@ -8,7 +8,6 @@ import it.loris.myapi.repositories.MoveRepository;
 import it.loris.myapi.repositories.PlayerRepository;
 import it.loris.myapi.repositories.UserRepository;
 import it.loris.myapi.util.Color;
-import it.loris.myapi.util.IllegalRequestParamException;
 import it.loris.myapi.util.ResourceNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;

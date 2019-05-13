@@ -8,7 +8,6 @@ import org.springframework.security.oauth2.common.exceptions.UnauthorizedUserExc
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-import org.springframework.web.context.request.WebRequest;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Date;
@@ -20,7 +19,7 @@ public class ExceptionHandlerController {
     @ResponseBody
     @ExceptionHandler(value = ResourceNotFoundException.class)
     public ResponseEntity<?> handleResourceNotFoundException(ResourceNotFoundException exception, HttpServletRequest request) {
-        LinkedHashMap<String, Object> map = new LinkedHashMap();
+        LinkedHashMap<String, Object> map = new LinkedHashMap<>();
         map.put("timestamp", new Date());
         map.put("status", HttpStatus.NOT_FOUND.value());
         map.put("error", "Resource Not Found");
@@ -32,7 +31,7 @@ public class ExceptionHandlerController {
     @ResponseBody
     @ExceptionHandler(value = IllegalRequestParamException.class)
     public ResponseEntity<?> handleIllegalRequestParamException(IllegalRequestParamException exception, HttpServletRequest request) {
-        LinkedHashMap<String, Object> map = new LinkedHashMap();
+        LinkedHashMap<String, Object> map = new LinkedHashMap<>();
         map.put("timestamp", new Date());
         map.put("status", HttpStatus.BAD_REQUEST.value());
         map.put("error", "Illegal Request Parameters");
@@ -44,7 +43,7 @@ public class ExceptionHandlerController {
     @ResponseBody
     @ExceptionHandler(value = UnauthorizedUserException.class)
     public ResponseEntity<?> handleUnauthorizedUserException(UnauthorizedUserException exception, HttpServletRequest request) {
-        LinkedHashMap<String, Object> map = new LinkedHashMap();
+        LinkedHashMap<String, Object> map = new LinkedHashMap<>();
         map.put("timestamp", new Date());
         map.put("status", HttpStatus.UNAUTHORIZED.value());
         map.put("error", "Unauthorized User");
