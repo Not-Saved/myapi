@@ -1,13 +1,14 @@
 package it.loris.myapi.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import it.loris.myapi.enums.Color;
+import it.loris.myapi.util.Color;
 import lombok.AccessLevel;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -18,23 +19,24 @@ import java.util.List;
 public class Player {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE )
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private Long id;
 
     private final Date createdAt = new Date();
     private final String username;
-    private final Color color;
+    private Color color;
+    private boolean winner = false;
 
     @ManyToOne(cascade = CascadeType.MERGE)
     @JsonIgnore
-    private Users users;
+    private final MyUser playerUser;
 
-    @ManyToOne(cascade = CascadeType.MERGE)
+    @OneToOne(cascade = CascadeType.ALL)
     @JsonIgnore
-    private Game game;
+    private final Game game;
 
     @OneToMany(mappedBy = "player")
     @JsonIgnore
-    private List<Move> moves;
+    private final List<Move> moves = new ArrayList<>();
 
 }

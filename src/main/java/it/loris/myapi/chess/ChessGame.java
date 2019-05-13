@@ -17,17 +17,17 @@ public class ChessGame {
 
 		if (winCondition(board, lastMove.getPlayer())) {
 			game.setInProgress(false);
-			game.setWinner(lastMove.getPlayer());
+			lastMove.getPlayer().setWinner(true);
 		}
 	}
 
 	private static Board proposeMove(Board board, Move move) {
 		Square movingFromSquare = board.getPosition(move.getMovingFrom());
 		if(movingFromSquare.piece == null){
-			throw new IllegalArgumentException("No piece to move!");
+			throw new IllegalArgumentException("Invalid move: no piece present in starting square");
 		}
 		else if (movingFromSquare.piece.color != move.getPlayer().getColor()) {
-			throw new IllegalArgumentException("Can't move opponent pieces!");
+			throw new IllegalArgumentException("Invalid move: selected piece belongs to the opponent");
 		}
 		return ChessGameMaster.makeMove(board, move);
 	}
@@ -42,7 +42,7 @@ public class ChessGame {
 				board.getPiece("W_K");
 				return false;
 			default:
-				throw new IllegalStateException("Should have never went here!");
+				throw new IllegalStateException("???");
 			}
 		}
 		catch (IllegalArgumentException exc) {

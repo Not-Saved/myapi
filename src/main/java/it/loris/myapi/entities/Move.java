@@ -1,7 +1,7 @@
 package it.loris.myapi.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import it.loris.myapi.enums.MoveType;
+import it.loris.myapi.util.MoveType;
 import lombok.AccessLevel;
 import lombok.Data;
 import lombok.NoArgsConstructor;

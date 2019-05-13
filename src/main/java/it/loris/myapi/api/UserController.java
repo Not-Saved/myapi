@@ -1,48 +1,70 @@
 package it.loris.myapi.api;
 
-import it.loris.myapi.entities.Users;
+import it.loris.myapi.entities.Game;
+import it.loris.myapi.entities.MyUser;
+import it.loris.myapi.entities.Player;
+import it.loris.myapi.repositories.PlayerRepository;
 import it.loris.myapi.repositories.UserRepository;
+import it.loris.myapi.util.IllegalRequestParamException;
+import it.loris.myapi.util.ResourceNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
-import javax.websocket.server.PathParam;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @RestController
-@RequestMapping(path = "/users", produces = "application/json")
+@RequestMapping(path = "/user", produces = "application/json")
 @CrossOrigin("*")
 public class UserController {
 
+    private final PlayerRepository playerRepo;
     private final UserRepository userRepo;
-    private final PasswordEncoder encoder;
 
     @Autowired
-    public UserController(UserRepository userRepo, PasswordEncoder encoder){
+    private PasswordEncoder encoder;
+
+    @Autowired
+    public UserController(PlayerRepository playerRepo, UserRepository userRepo){
         this.userRepo = userRepo;
-        this.encoder = encoder;
+        this.playerRepo = playerRepo;
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<Users> getUserById(@PathVariable("id") Long id, @AuthenticationPrincipal Users users) {
-        Optional<Users> optUser = userRepo.findById(id);
-        if (optUser.isPresent() && users.getId() == id) {
-            return new ResponseEntity<>(optUser.get(), HttpStatus.FOUND);
+    @GetMapping
+    public ResponseEntity<Object> getAllUsers() {
+        Iterable<MyUser> users = userRepo.findAll();
+        return new ResponseEntity<>(users, HttpStatus.FOUND);
+    }
+
+    @GetMapping(path = "/{id}")
+    public ResponseEntity<Object> getUserById(@PathVariable("id") Long id) {
+        if(userRepo.findById(id).isPresent()) {
+            Optional<MyUser> users = userRepo.findById(id);
+            return new ResponseEntity<>(users, HttpStatus.FOUND);
         }
-        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        throw new ResourceNotFoundException("User " +id+ " not found");
+    }
+
+    @GetMapping(path = "/{id}/game")
+    public ResponseEntity<Object> getUsersGames(@PathVariable("id") Long id) {
+        if(userRepo.findById(id).isPresent()){
+            Iterable<Game> games = playerRepo.findByPlayerUserId(id).stream().map(Player::getGame).collect(Collectors.toList());
+            return new ResponseEntity<>(games, HttpStatus.FOUND);
+        }
+        throw new ResourceNotFoundException("User " +id+ " not found");
     }
 
     @PostMapping
-    public HttpStatus registerUser(@PathParam(value="username") String username, @PathParam(value = "password") String password){
+    public ResponseEntity<Object> registerUser(@RequestParam(value="username") String username, @RequestParam(value = "password") String password){
         if(!userRepo.findByUsername(username.toLowerCase()).isPresent()){
-            Users users = new Users(username.toLowerCase(), encoder.encode(password));
-            users.setRole("USER");
-            userRepo.save(users);
-            return HttpStatus.CREATED;
+            MyUser myUser = new MyUser(username.toLowerCase(), encoder.encode(password));
+            myUser.setRole("USER");
+            userRepo.save(myUser);
+            return new ResponseEntity<>(myUser, HttpStatus.CREATED);
         }
-        return HttpStatus.BAD_REQUEST;
+        throw new IllegalRequestParamException("User with username:  " +username+ " already exists");
     }
 }

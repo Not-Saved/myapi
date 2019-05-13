@@ -1,6 +1,6 @@
 package it.loris.myapi.chess;
 
-import it.loris.myapi.enums.MoveType;
+import it.loris.myapi.util.MoveType;
 import it.loris.myapi.chess.basicdata.Queen;
 import it.loris.myapi.entities.Move;
 
@@ -35,7 +35,7 @@ public class ChessGameMaster {
 				return board.moveAndReplace(movingFrom, movingTo);
 			}
 			else {
-				throw new IllegalArgumentException("Invalid move! Piece can't move that way!");
+				throw new IllegalArgumentException("Invalid move: this piece can't move that way");
 			}
 		}
 		else {
@@ -44,10 +44,10 @@ public class ChessGameMaster {
 				return board.moveAndReplace(movingFrom, movingTo);
 			}
 			if (movingTo.piece.color == movingFrom.piece.color) {
-				throw new IllegalArgumentException("Invalid move! Square occupied by friendly piece!");
+				throw new IllegalArgumentException("Invalid move: destination square occupied by friendly piece");
 			}	
 			else {
-				throw new IllegalArgumentException("Invalid move! Piece can't capture that way");
+				throw new IllegalArgumentException("Invalid move: this piece can't capture that way");
 			}	
 		}
 	}
@@ -57,7 +57,7 @@ public class ChessGameMaster {
 		if (isDiagonal(moveArray) || isStraight(moveArray)) {
 			for (int k=1; k < arrayMax(arrayAbs(moveArray)); k++) {
 				if (board.contains(board.getPosition(arrayScaleAdd(1, movingFrom.position.toArray(), k, (arrayOfGenDir(moveArray)))))) {
-					throw new IllegalArgumentException("Invalid move! Path not clear!");
+					throw new IllegalArgumentException("Invalid move: Path to destination square not clear");
 				}
 			}
 		}
@@ -67,7 +67,7 @@ public class ChessGameMaster {
 		char color = movingFrom.piece.color.toString().charAt(0); 
 		checkPath(board, board.getPiece(color + "_K"), board.getPiece(color + "_R2"));
 		if (board.getPiece(color + "_R2").piece.moveCount != 0) {
-			throw new IllegalArgumentException("Invalid Move! Castling not allowed!");
+			throw new IllegalArgumentException("Invalid Move: castling not allowed");
 		}
 		Square oo = board.getPosition(array(5, movingFrom.position.y));
 		return board.moveAndReplace(movingFrom, movingTo).moveAndReplace(board.getPiece(color + "_R2"), oo);
@@ -77,7 +77,7 @@ public class ChessGameMaster {
 		char color = movingFrom.piece.color.toString().charAt(0); 
 		checkPath(board, board.getPiece(color + "_K"), board.getPiece(color + "_R1"));
 		if (board.getPiece(color + "_R1").piece.moveCount != 0) {
-			throw new IllegalArgumentException("Invalid Move! Castling not allowed!");
+			throw new IllegalArgumentException("Invalid Move: Castling not allowed");
 		}
 		Square ooo = board.getPosition(array(3, movingFrom.position.y));
 		return board.moveAndReplace(movingFrom, movingTo).moveAndReplace(board.getPiece(color + "_R1"), ooo);
@@ -106,7 +106,7 @@ public class ChessGameMaster {
 			return board.moveAndReplace(movingFrom, movingTo).remove(enPassant);
 		}	
 		else {
-			throw new IllegalArgumentException("Invalid Move! Illegal En Passant!");
+			throw new IllegalArgumentException("Invalid move: this piece can't capture that way");
 		}
 	}
 	

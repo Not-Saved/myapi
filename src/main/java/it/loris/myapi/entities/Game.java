@@ -1,29 +1,36 @@
 package it.loris.myapi.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import it.loris.myapi.util.Color;
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 import javax.persistence.*;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
-@Entity
 @Data
+@Entity
 public class Game {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE )
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private Long id;
 
     private final Date createdAt = new Date();
+
     private boolean inProgress;
 
-    @OneToOne(orphanRemoval = true)
-    private Player winner;
-
-    @OneToMany(mappedBy = "game", orphanRemoval = true)
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "game", fetch = FetchType.EAGER)
     private List<Player> players = new ArrayList<>();
 
+    @JsonIgnore
     @OneToMany(cascade = CascadeType.ALL)
-    private List<Move> moves;
+    private List<Move> moves = new ArrayList<>();
+
+    @JsonIgnore
+    public void setRightPlayer(Player player){
+        player.setColor((players.stream().anyMatch(p -> p.getColor() == Color.WHITE)) ? Color.BLACK : Color.WHITE);
+    }
+
 }

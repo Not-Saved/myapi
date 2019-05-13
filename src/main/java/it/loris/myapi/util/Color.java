@@ -1,3 +1,3 @@
-package it.loris.myapi.enums;
+package it.loris.myapi.util;
 
 public enum Color {WHITE, BLACK}
