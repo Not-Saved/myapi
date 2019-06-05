@@ -39,6 +39,8 @@ public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdap
 
     @Override
     public void configure(AuthorizationServerEndpointsConfigurer endpoints) {
-        endpoints.authenticationManager(auth).pathMapping("/oauth/token", "/api/oauth/token");
+        endpoints
+                .authenticationManager(auth)
+                .pathMapping("/oauth/token", "/api/oauth/token");
     }
 }
