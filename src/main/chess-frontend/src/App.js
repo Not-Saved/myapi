@@ -18,7 +18,7 @@ function App() {
       .join('&');
 
     const response = await axios.request({
-      url: 'http://localhost:8080/api/oauth/token',
+      url: process.env.REACT_APP_DOMAIN + 'api/oauth/token',
       method: 'post',
       auth: {
         username: "myClient",
