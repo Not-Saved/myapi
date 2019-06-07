@@ -1,56 +1,49 @@
 import React from 'react';
-import logo from './logo.svg';
-import axios from 'axios';
+import { accessToken, refreshToken } from './api/notChessRequests';
+import { Container } from 'semantic-ui-react';
+import LoginForm from './components/LoginForm';
 
-import './App.css';
 
-function App() {
-  const axiosCall = async () => {
-
-    const params = {
-      "grant_type": "password",
-      "username": "loris",
-      "password": "sirol"
-    }
-
-    const data = Object.entries(params)
-      .map(([key, val]) => `${key}=${encodeURIComponent(val)}`)
-      .join('&');
-
-    const response = await axios.request({
-      url: process.env.REACT_APP_DOMAIN + 'api/oauth/token',
-      method: 'post',
-      auth: {
-        username: "myClient",
-        password: "secret"
-      },
-      headers: {
-        "content-type": "application/x-www-form-urlencoded"
-      },
-      data
-    }
-    ).catch((error) => console.log(error.response))
-    console.log(response.data)
+class App extends React.Component {
+  state = {
+    tokenObject: {},
+    refreshToken: ''
   }
-  axiosCall()
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+
+  render() {
+    return (
+      <Container
+        style={{
+          marginTop: '50px',
+          display: 'flex',
+          justifyContent: 'center'
+        }}
+      >
+        <LoginForm
+          getToken={(username, password) => this.getToken(username, password)}
+          refreshToken={() => refreshToken()}
+        />
+      </Container>
+    );
+  }
+
+  async getToken(username, password) {
+    const response = await accessToken(username, password);
+    this.setState({ tokenObject: response.data });
+    this.setState({ refreshToken: response.data.refresh_token })
+    return response
+  }
+
+  async renewToken() {
+    try {
+      const response = await refreshToken(this.state.tokenObject.refresh_token);
+      this.setState({ tokenObject: response.data });
+    } catch (error) {
+      this.setState({ tokenObject: error.response });
+    } finally {
+      console.log(this.state.tokenObject);
+    }
+  }
 }
 
 export default App;
