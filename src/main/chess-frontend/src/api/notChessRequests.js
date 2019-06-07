@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const BASE_RUL = process.env.REACT_APP_DOMAIN;
+const BASE_RUL = process.env.REACT_APP_DOMAIN + '/api';
 
 export const notChessRequest = axios.create({
 	baseURL: BASE_RUL,
