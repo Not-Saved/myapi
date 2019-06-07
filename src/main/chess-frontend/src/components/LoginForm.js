@@ -1,5 +1,5 @@
 import React from 'react';
-import { Form, Message, Header, Icon, Input } from 'semantic-ui-react';
+import { Form, Message, Header, Icon, Input, Segment } from 'semantic-ui-react';
 
 class LoginForm extends React.Component {
 	state = {
@@ -7,7 +7,8 @@ class LoginForm extends React.Component {
 		password: '',
 		loading: false,
 		error: { hidden: true, message: '' },
-		success: { hidden: true, message: '' }
+		success: { hidden: true, message: '' },
+		info: { hidden: false, message: 'Welcome!' }
 	}
 
 
@@ -24,13 +25,14 @@ class LoginForm extends React.Component {
 			this.setState({ success: { hidden: true } })
 			this.setState({ error: { hidden: false, message: "Something went wrong... try again!" } })
 		} finally {
+			this.setState({ info: { hidden: true } })
 			this.setState({ password: '' })
 			this.setState({ loading: false })
 		}
 	}
 
 	render() {
-		const { username, password, loading, error, success } = this.state
+		const { username, password, loading, error, info, success } = this.state
 		return (
 			<div style={{
 				width: '315px',
@@ -38,13 +40,11 @@ class LoginForm extends React.Component {
 				padding: '7px'
 			}}
 			>
-				<Header as='h2' textAlign='left' attached='top'>
-					<Icon name='chess rook' style={{ fontSize: '52px' }} />
+				<Header as='h2' textAlign='left' attached='top' style={{ backgroundColor: '#F8F8F9' }}>
+					<Icon name='chess rook' style={{ fontSize: '42px' }} />
 					<Header.Content>
 						NotChess
-						<Header.Subheader>
-							Welcome
-							</Header.Subheader>
+
 					</Header.Content>
 				</Header>
 
@@ -67,17 +67,22 @@ class LoginForm extends React.Component {
 							value={password}
 							onChange={this.handleChange}
 							placeholder='Password'
-							action={{ icon: { name: 'sign-in', size: 'large' } }}
-							labelPosition='right' />
+							action={{ color: 'lightGrey', icon: { name: 'sign-in' }, style: { backgroundColor: '#F8F8F9', border: '1px solid lightGray' } }}
+						/>
 					</Form.Field>
 				</Form>
+				<Message attached='bottom'
+					style={{ textAlign: 'left' }}
+					color='lightGrey'
+					hidden={info.hidden}
+					content={info.message} />
 				<Message attached='bottom'
 					error
 					hidden={error.hidden}
 					content={error.message} />
 				<Message attached='bottom'
-					hidden={success.hidden}
 					success
+					hidden={success.hidden}
 					content={success.message} />
 			</div>
 		)
