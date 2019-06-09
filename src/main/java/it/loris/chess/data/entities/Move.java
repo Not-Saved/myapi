@@ -9,21 +9,19 @@ import java.util.Date;
 @Entity
 @Data
 @EqualsAndHashCode(exclude = "player")
-@NoArgsConstructor(access = AccessLevel.PRIVATE, force = true)
 @RequiredArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PRIVATE, force = true)
 public class Move {
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private Long id;
+    private final Date createdAt = new Date();
 
     @ManyToOne(cascade = CascadeType.ALL)
     private final Player player;
 
-    private final Date createdAt = new Date();
-
     private MoveType moveType;
     private final String movingFrom;
     private final String movingTo;
-
 }

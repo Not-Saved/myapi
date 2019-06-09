@@ -1,5 +1,7 @@
 package it.loris.chess.api;
 
+import com.fasterxml.jackson.annotation.JsonView;
+import it.loris.chess.api.json.View;
 import it.loris.chess.data.entities.Game;
 import it.loris.chess.data.entities.MyUser;
 import it.loris.chess.data.entities.Player;
@@ -7,8 +9,9 @@ import it.loris.chess.data.repositories.GameRepository;
 import it.loris.chess.data.repositories.MoveRepository;
 import it.loris.chess.data.repositories.PlayerRepository;
 import it.loris.chess.data.repositories.UserRepository;
-import it.loris.chess.util.Enums.*;
 import it.loris.chess.error.exceptions.ResourceNotFoundException;
+import it.loris.chess.util.Enums.Color;
+import it.loris.chess.util.Enums.GameState;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -38,6 +41,7 @@ public class GameController {
         this.playerRepo = playerRepo;
     }
 
+    @JsonView(View.Summary.class)
     @GetMapping
     public ResponseEntity<Object> getAllGames(
             @AuthenticationPrincipal  MyUser user,
@@ -126,4 +130,3 @@ public class GameController {
         throw new ResourceNotFoundException("Game " +id+ " not found");
     }
 }
-

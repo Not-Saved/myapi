@@ -1,16 +1,18 @@
 package it.loris.chess.api;
 
-import it.loris.chess.data.entities.MyUser;
-import it.loris.chess.error.exceptions.IllegalRequestParamException;
-import it.loris.chess.error.exceptions.ResourceNotFoundException;
 import it.loris.chess.chesslogic.ChessGame;
 import it.loris.chess.data.entities.Game;
 import it.loris.chess.data.entities.Move;
+import it.loris.chess.data.entities.MyUser;
 import it.loris.chess.data.entities.Player;
 import it.loris.chess.data.repositories.GameRepository;
 import it.loris.chess.data.repositories.MoveRepository;
 import it.loris.chess.data.repositories.PlayerRepository;
 import it.loris.chess.data.repositories.UserRepository;
+import it.loris.chess.error.exceptions.IllegalRequestParamException;
+import it.loris.chess.error.exceptions.ResourceNotFoundException;
+import it.loris.chess.util.Enums.Color;
+import it.loris.chess.util.Enums.GameState;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -18,7 +20,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.common.exceptions.UnauthorizedUserException;
 import org.springframework.web.bind.annotation.*;
-import it.loris.chess.util.Enums.*;
 
 import java.util.Optional;
 

@@ -17,8 +17,8 @@ import java.util.Set;
 
 @Entity
 @Data
-@NoArgsConstructor(access= AccessLevel.PRIVATE, force=true)
 @RequiredArgsConstructor
+@NoArgsConstructor(access=AccessLevel.PRIVATE, force=true)
 public class MyUser implements UserDetails {
 
     @Id
@@ -68,5 +68,4 @@ public class MyUser implements UserDetails {
     public boolean isEnabled() {
         return true;
     }
-
 }
