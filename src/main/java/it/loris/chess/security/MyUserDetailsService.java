@@ -1,7 +1,7 @@
 package it.loris.chess.security;
 
-import it.loris.chess.entities.MyUser;
-import it.loris.chess.repositories.UserRepository;
+import it.loris.chess.data.entities.MyUser;
+import it.loris.chess.data.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -22,10 +22,10 @@ public class MyUserDetailsService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        Optional<MyUser> users = userRepo.findByUsername(username);
+        Optional<MyUser> users = userRepo.findByUsername(username.toLowerCase().trim());
         if(users.isPresent()){
             return users.get();
         }
-        throw new UsernameNotFoundException("MyUser '" + username + "' not found");
+        throw new UsernameNotFoundException("User '" + username + "' not found");
     }
 }

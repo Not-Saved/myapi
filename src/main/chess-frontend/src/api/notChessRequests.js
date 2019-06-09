@@ -13,8 +13,8 @@ export const notChessRequest = axios.create({
 const basicAuth = axios.create({
 	baseURL: BASE_RUL + "/oauth/token",
 	auth: {
-		username: "myClient",
-		password: "secret"
+		username: "notChessApi",
+		password: "notChessApi"
 	},
 	headers: {
 		"content-type": "application/x-www-form-urlencoded"

@@ -1,20 +1,18 @@
 package it.loris.chess.api;
 
-import it.loris.chess.entities.Game;
-import it.loris.chess.entities.MyUser;
-import it.loris.chess.entities.Player;
-import it.loris.chess.repositories.PlayerRepository;
-import it.loris.chess.repositories.UserRepository;
-import it.loris.chess.util.IllegalRequestParamException;
-import it.loris.chess.util.ResourceNotFoundException;
+import it.loris.chess.data.entities.MyUser;
+import it.loris.chess.data.repositories.PlayerRepository;
+import it.loris.chess.data.repositories.UserRepository;
+import it.loris.chess.error.exceptions.IllegalRequestParamException;
+import it.loris.chess.error.exceptions.ResourceNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping(path = "/api/user", produces = "application/json")
@@ -48,23 +46,28 @@ public class UserController {
         throw new ResourceNotFoundException("User " +id+ " not found");
     }
 
-    @GetMapping(path = "/{id}/game")
-    public ResponseEntity<Object> getUsersGames(@PathVariable("id") Long id) {
-        if(userRepo.findById(id).isPresent()){
-            Iterable<Game> games = playerRepo.findByPlayerUserId(id).stream().map(Player::getGame).collect(Collectors.toList());
-            return new ResponseEntity<>(games, HttpStatus.FOUND);
-        }
-        throw new ResourceNotFoundException("User " +id+ " not found");
+    @GetMapping(path = "/me")
+    public ResponseEntity<Object> getLoggedUser(@AuthenticationPrincipal MyUser user) {
+        return new ResponseEntity<>(user, HttpStatus.FOUND);
     }
 
     @PostMapping
     public ResponseEntity<Object> registerUser(@RequestParam(value="username") String username, @RequestParam(value = "password") String password){
         if(!userRepo.findByUsername(username.toLowerCase()).isPresent()){
-            MyUser myUser = new MyUser(username.toLowerCase(), encoder.encode(password));
+            MyUser myUser = new MyUser(username.toLowerCase().trim(), encoder.encode(password));
             myUser.setRole("USER");
             userRepo.save(myUser);
             return new ResponseEntity<>(myUser, HttpStatus.CREATED);
         }
         throw new IllegalRequestParamException("User with username:  " +username+ " already exists");
+    }
+
+    @DeleteMapping(path = "/{id}")
+    public ResponseEntity<Object> deleteUserById(@PathVariable("id") Long id){
+        if(userRepo.findById(id).isPresent()){
+            userRepo.delete(userRepo.findById(id).get());
+            return new ResponseEntity<>(HttpStatus.ACCEPTED);
+        }
+        throw new ResourceNotFoundException("User " +id+ " not found");
     }
 }

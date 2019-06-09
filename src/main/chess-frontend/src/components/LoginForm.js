@@ -1,5 +1,5 @@
 import React from 'react';
-import { Form, Message, Header, Icon, Input, Segment } from 'semantic-ui-react';
+import { Form, Message, Header, Icon, Input } from 'semantic-ui-react';
 
 class LoginForm extends React.Component {
 	state = {
@@ -8,9 +8,8 @@ class LoginForm extends React.Component {
 		loading: false,
 		error: { hidden: true, message: '' },
 		success: { hidden: true, message: '' },
-		info: { hidden: false, message: 'Welcome!' }
+		info: { hidden: false, message: 'Welcome!' },
 	}
-
 
 	handleChange = (e, { name, value }) => this.setState({ [name]: value })
 
@@ -67,13 +66,12 @@ class LoginForm extends React.Component {
 							value={password}
 							onChange={this.handleChange}
 							placeholder='Password'
-							action={{ color: 'lightGrey', icon: { name: 'sign-in' }, style: { backgroundColor: '#F8F8F9', border: '1px solid lightGray' } }}
+							action={{ icon: { name: 'sign-in' }, style: { backgroundColor: '#F8F8F9', border: '1px solid lightGray' } }}
 						/>
 					</Form.Field>
 				</Form>
 				<Message attached='bottom'
 					style={{ textAlign: 'left' }}
-					color='lightGrey'
 					hidden={info.hidden}
 					content={info.message} />
 				<Message attached='bottom'
