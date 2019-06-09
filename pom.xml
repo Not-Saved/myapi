@@ -134,6 +134,9 @@
                         <phase>generate-resources</phase>
                         <configuration>
                             <target>
+                                <delete>
+                                    <fileset dir="${project.basedir}/src/main/resources/static"/>
+                                </delete>
                                 <copy todir="${project.basedir}/src/main/resources/static">
                                     <fileset dir="${project.basedir}/src/main/chess-frontend/build"/>
                                 </copy>

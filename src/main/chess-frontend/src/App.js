@@ -10,6 +10,8 @@ class App extends React.Component {
     refreshToken: ''
   }
 
+  toggleVisibility = () => this.setState(prevState => ({ visible: !prevState.visible }))
+
   render() {
     return (
       <Container

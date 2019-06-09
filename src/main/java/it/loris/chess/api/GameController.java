@@ -1,14 +1,17 @@
 package it.loris.chess.api;
 
-import it.loris.chess.entities.Game;
-import it.loris.chess.entities.MyUser;
-import it.loris.chess.entities.Player;
-import it.loris.chess.repositories.GameRepository;
-import it.loris.chess.repositories.MoveRepository;
-import it.loris.chess.repositories.PlayerRepository;
-import it.loris.chess.repositories.UserRepository;
-import it.loris.chess.util.Color;
-import it.loris.chess.util.ResourceNotFoundException;
+import com.fasterxml.jackson.annotation.JsonView;
+import it.loris.chess.api.json.View;
+import it.loris.chess.data.entities.Game;
+import it.loris.chess.data.entities.MyUser;
+import it.loris.chess.data.entities.Player;
+import it.loris.chess.data.repositories.GameRepository;
+import it.loris.chess.data.repositories.MoveRepository;
+import it.loris.chess.data.repositories.PlayerRepository;
+import it.loris.chess.data.repositories.UserRepository;
+import it.loris.chess.error.exceptions.ResourceNotFoundException;
+import it.loris.chess.util.Enums.Color;
+import it.loris.chess.util.Enums.GameState;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,8 +19,11 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.common.exceptions.UnauthorizedUserException;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Date;
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping(path = "/api/**/game", produces = "application/json")
@@ -35,9 +41,28 @@ public class GameController {
         this.playerRepo = playerRepo;
     }
 
+    @JsonView(View.Summary.class)
     @GetMapping
-    public ResponseEntity<Object> getAllGames(){
-        return new ResponseEntity<>(gameRepo.findAll(), HttpStatus.FOUND);
+    public ResponseEntity<Object> getAllGames(
+            @AuthenticationPrincipal  MyUser user,
+            @RequestParam(value="mine", defaultValue = "false") boolean mine,
+            @RequestParam(value="state", required = false) GameState state)
+    {
+        MyUser myUser = userRepo.findById(user.getId()).get();
+        if(mine) {
+            List<Game> games = playerRepo.findByPlayerUserId(myUser.getId())
+                    .stream()
+                    .map(Player::getGame)
+                    .filter(g -> (state != null) ? g.getState() == state : true)
+                    .collect(Collectors.toList());
+            return new ResponseEntity<>(games, HttpStatus.FOUND);
+        } else {
+            List<Game> games = gameRepo.findFirst30ByCreatedAtBeforeOrderByCreatedAt(new Date())
+                    .stream()
+                    .filter(g -> (state != null) ? g.getState() == state : true)
+                    .collect(Collectors.toList());
+            return new ResponseEntity<>(games, HttpStatus.FOUND);
+        }
     }
 
     @GetMapping(path="/{id}")
@@ -49,19 +74,23 @@ public class GameController {
     }
 
     @PostMapping
-    public ResponseEntity<Object> postGame(@RequestParam(value="color", required = false, defaultValue = "WHITE") Color color, @AuthenticationPrincipal MyUser myUser){
-        if(playerRepo.findByPlayerUserId(myUser.getId()).stream()
+    public ResponseEntity<Object> postGame(
+            @RequestParam(value="color", defaultValue = "WHITE") Color color,
+            @AuthenticationPrincipal MyUser myUser)
+    {
+        if(playerRepo.findByPlayerUserId(myUser.getId())
+                .stream()
                 .map(Player::getGame)
-                .filter(p-> p.isInProgress() || p.getMoves().isEmpty())
-                .count() < 10){
-            Game game = new Game();
-            game.setInProgress(false);
-
+                .filter(g-> g.getState() == GameState.NEW)
+                .count() < 10)
+        {
             MyUser user = userRepo.findById(myUser.getId()).get();
+            Game game = new Game();
+
             Player player = new Player(myUser.getUsername(), user, game);
             player.setColor(color);
-
             game.getPlayers().add(player);
+
             gameRepo.save(game);
             return new ResponseEntity<>(game, HttpStatus.CREATED);
         }
@@ -80,7 +109,7 @@ public class GameController {
             if(game.getPlayers().stream().anyMatch(user.getPlayers()::contains)){
                 throw new UnauthorizedUserException("User is already participating in game " +game.getId());
             }
-            game.setInProgress(true);
+            game.setState(GameState.IN_PROGRESS);
 
             Player player = new Player(myUser.getUsername(), user, game);
             game.setRightPlayer(player);
@@ -101,4 +130,3 @@ public class GameController {
         throw new ResourceNotFoundException("Game " +id+ " not found");
     }
 }
-

@@ -1,7 +1,7 @@
 package it.loris.chess;
 
-import it.loris.chess.entities.MyUser;
-import it.loris.chess.repositories.UserRepository;
+import it.loris.chess.data.entities.MyUser;
+import it.loris.chess.data.repositories.UserRepository;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -35,6 +35,4 @@ public class ChessApplication implements WebMvcConfigurer {
             }
         };
     }
-
-
 }
