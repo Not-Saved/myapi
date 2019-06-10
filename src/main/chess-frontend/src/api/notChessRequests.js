@@ -1,17 +1,13 @@
 import axios from 'axios';
 
-const BASE_RUL = process.env.REACT_APP_DOMAIN + '/api';
+const BASE_URL = process.env.REACT_APP_DOMAIN + '/api';
 
-export const notChessRequest = axios.create({
-	baseURL: BASE_RUL,
-	timeout: 1000,
-	headers: {
-		"access_token": ''
-	}
+export const notChessReq = axios.create({
+	baseURL: BASE_URL
 });
 
 const basicAuth = axios.create({
-	baseURL: BASE_RUL + "/oauth/token",
+	baseURL: BASE_URL + "/oauth/token",
 	auth: {
 		username: "notChessApi",
 		password: "notChessApi"
@@ -21,13 +17,13 @@ const basicAuth = axios.create({
 	}
 });
 
-export const accessToken = (username, password) => {
+export const accessToken = (credentials) => {
 	var querystring = require('querystring');
 	return basicAuth.post('',
 		querystring.stringify({
 			"grant_type": "password",
-			"username": username,
-			"password": password
+			"username": credentials.username,
+			"password": credentials.password
 		})
 	)
 }

@@ -43,7 +43,7 @@ public class MoveController {
     @GetMapping(path = "/{id}/move")
     public ResponseEntity<Object> getAllMoves(@PathVariable("id") Long id) {
         if(gameRepo.findById(id).isPresent()) {
-            return new ResponseEntity<>(gameRepo.findById(id).get().getMoves(), HttpStatus.FOUND);
+            return new ResponseEntity<>(gameRepo.findById(id).get().getMoves(), HttpStatus.OK);
         }
         throw new ResourceNotFoundException("Game " +id+ " not found");
     }

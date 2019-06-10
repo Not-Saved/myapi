@@ -34,21 +34,21 @@ public class UserController {
     @GetMapping
     public ResponseEntity<Object> getAllUsers() {
         Iterable<MyUser> users = userRepo.findAll();
-        return new ResponseEntity<>(users, HttpStatus.FOUND);
+        return new ResponseEntity<>(users, HttpStatus.OK);
     }
 
     @GetMapping(path = "/{id}")
     public ResponseEntity<Object> getUserById(@PathVariable("id") Long id) {
         if(userRepo.findById(id).isPresent()) {
             Optional<MyUser> users = userRepo.findById(id);
-            return new ResponseEntity<>(users, HttpStatus.FOUND);
+            return new ResponseEntity<>(users, HttpStatus.OK);
         }
         throw new ResourceNotFoundException("User " +id+ " not found");
     }
 
     @GetMapping(path = "/me")
     public ResponseEntity<Object> getLoggedUser(@AuthenticationPrincipal MyUser user) {
-        return new ResponseEntity<>(user, HttpStatus.FOUND);
+        return new ResponseEntity<>(user, HttpStatus.OK);
     }
 
     @PostMapping
@@ -66,7 +66,7 @@ public class UserController {
     public ResponseEntity<Object> deleteUserById(@PathVariable("id") Long id){
         if(userRepo.findById(id).isPresent()){
             userRepo.delete(userRepo.findById(id).get());
-            return new ResponseEntity<>(HttpStatus.ACCEPTED);
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }
         throw new ResourceNotFoundException("User " +id+ " not found");
     }
