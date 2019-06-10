@@ -55,20 +55,20 @@ public class GameController {
                     .map(Player::getGame)
                     .filter(g -> (state != null) ? g.getState() == state : true)
                     .collect(Collectors.toList());
-            return new ResponseEntity<>(games, HttpStatus.FOUND);
+            return new ResponseEntity<>(games, HttpStatus.OK);
         } else {
             List<Game> games = gameRepo.findFirst30ByCreatedAtBeforeOrderByCreatedAt(new Date())
                     .stream()
                     .filter(g -> (state != null) ? g.getState() == state : true)
                     .collect(Collectors.toList());
-            return new ResponseEntity<>(games, HttpStatus.FOUND);
+            return new ResponseEntity<>(games, HttpStatus.OK);
         }
     }
 
     @GetMapping(path="/{id}")
     public ResponseEntity<Object> getGame(@PathVariable("id") Long id){
         if(gameRepo.findById(id).isPresent()){
-            return new ResponseEntity<>(gameRepo.findById(id), HttpStatus.FOUND);
+            return new ResponseEntity<>(gameRepo.findById(id), HttpStatus.OK);
         }
         throw new ResourceNotFoundException("Game " +id+ " not found");
     }
@@ -125,7 +125,7 @@ public class GameController {
     public ResponseEntity<Object> deleteGame(@PathVariable("id") Long id){
         if(gameRepo.findById(id).isPresent()){
             gameRepo.delete(gameRepo.findById(id).get());
-            return new ResponseEntity<>(HttpStatus.ACCEPTED);
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }
         throw new ResourceNotFoundException("Game " +id+ " not found");
     }
