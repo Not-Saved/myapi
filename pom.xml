@@ -94,7 +94,7 @@
                 <artifactId>frontend-maven-plugin</artifactId>
                 <version>1.7.6</version>
                 <configuration>
-                    <workingDirectory>src/main/chess-frontend</workingDirectory>
+                    <workingDirectory>src/main/react/it/loris/frontend</workingDirectory>
                     <installDirectory>target</installDirectory>
                 </configuration>
                 <executions>
@@ -135,10 +135,10 @@
                         <configuration>
                             <target>
                                 <delete>
-                                    <fileset dir="${project.basedir}/src/main/resources/static"/>
+                                    <fileset dir="${project.basedir}/src/main/resources/public"/>
                                 </delete>
-                                <copy todir="${project.basedir}/src/main/resources/static">
-                                    <fileset dir="${project.basedir}/src/main/chess-frontend/build"/>
+                                <copy todir="${project.basedir}/src/main/resources/public">
+                                    <fileset dir="${project.basedir}/src/main/react/it/loris/frontend/build"/>
                                 </copy>
                             </target>
                         </configuration>

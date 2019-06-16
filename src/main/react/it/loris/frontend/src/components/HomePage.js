@@ -1,20 +1,10 @@
 import React from 'react'
 import { Container, Header, Grid, Icon } from 'semantic-ui-react';
-import { notChessReq } from '../api/notChessRequests';
+import { connect } from 'react-redux';
 
 class HomePage extends React.Component {
-	state = {
-		currentUser: {}
-	}
-
-	componentDidMount() {
-		this.getCurrentUser();
-	}
-
 	render() {
-		const { currentUser } = this.state
 		return (
-
 			<Container
 				style={{
 					marginTop: '13vh'
@@ -23,7 +13,7 @@ class HomePage extends React.Component {
 				<Grid centered>
 					<Grid.Row  >
 						<Header as='h1' >
-							Welcome back, {String(currentUser.username).charAt(0).toUpperCase() + String(currentUser.username).slice(1)}
+							Welcome back
 						</Header>
 					</Grid.Row>
 					<Grid.Row style={{ position: 'relative', top: '30px' }}>
@@ -35,21 +25,12 @@ class HomePage extends React.Component {
 					</Grid.Row>
 				</Grid>
 			</Container >
-
-
 		)
-	}
-
-	async getCurrentUser() {
-		const response = await notChessReq.request({
-			url: '/user/me',
-			headers: {
-				authorization: 'Bearer ' + this.props.tokenObject.access_token
-			}
-		})
-		this.setState({ currentUser: response.data });
 	}
 }
 
+const mapStateToProps = (state) => {
+	return { auth: state.auth };
+};
 
-export default HomePage;
+export default connect(mapStateToProps)(HomePage);
