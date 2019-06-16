@@ -1,9 +1,18 @@
 import axios from 'axios';
+import store from '../index';
 
 const BASE_URL = process.env.REACT_APP_DOMAIN + '/api';
 
-export const notChessReq = axios.create({
-	baseURL: BASE_URL
+const token = () => {
+	if (store && store.getState().auth.isSignedIn) {
+		const { auth } = store.getState();
+		return auth.tokenObject.access_token
+	}
+}
+
+export const notChessReq = () => axios.create({
+	baseURL: BASE_URL,
+	headers: { 'Authorization': "bearer " + token() }
 });
 
 const basicAuth = axios.create({
