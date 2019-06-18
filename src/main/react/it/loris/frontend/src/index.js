@@ -7,24 +7,24 @@ import { Provider } from 'react-redux';
 import { createStore, applyMiddleware, compose } from 'redux';
 import createSagaMiddleware from 'redux-saga';
 
-import reducers from './redux/reducers'
-import sagas from './redux/sagas'
+import reducers from './redux/reducers';
+import sagas from './redux/sagas';
 
 const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
-const sagaMiddleware = createSagaMiddleware()
+const sagaMiddleware = createSagaMiddleware();
 
 const store = createStore(
-	reducers,
-	composeEnhancers(applyMiddleware(sagaMiddleware))
+    reducers,
+    composeEnhancers(applyMiddleware(sagaMiddleware))
 );
 
-sagaMiddleware.run(sagas)
+sagaMiddleware.run(sagas);
 
 ReactDOM.render(
-	<Provider store={store}>
-		<App />
-	</Provider>,
-	document.querySelector('#root')
+    <Provider store={store}>
+        <App/>
+    </Provider>,
+    document.querySelector('#root')
 );
 
 serviceWorker.unregister();
