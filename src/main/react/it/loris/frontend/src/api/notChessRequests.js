@@ -4,46 +4,46 @@ import store from '../index';
 const BASE_URL = process.env.REACT_APP_DOMAIN + '/api';
 
 const token = () => {
-	if (store && store.getState().auth.isSignedIn) {
-		const { auth } = store.getState();
-		return auth.tokenObject.access_token
-	}
-}
+    if (store && store.getState().auth.isSignedIn) {
+        const {auth} = store.getState();
+        return auth.tokenObject.access_token;
+    }
+};
 
 export const notChessReq = () => axios.create({
-	baseURL: BASE_URL,
-	headers: { 'Authorization': "bearer " + token() }
+    baseURL: BASE_URL,
+    headers: {'Authorization': "bearer " + token()}
 });
 
 const basicAuth = axios.create({
-	baseURL: BASE_URL + "/oauth/token",
-	auth: {
-		username: "notChessApi",
-		password: "notChessApi"
-	},
-	headers: {
-		"content-type": "application/x-www-form-urlencoded"
-	}
+    baseURL: BASE_URL + "/oauth/token",
+    auth: {
+        username: "notChessApi",
+        password: "notChessApi"
+    },
+    headers: {
+        "content-type": "application/x-www-form-urlencoded"
+    }
 });
 
 export const accessToken = (credentials) => {
-	var querystring = require('querystring');
-	return basicAuth.post('',
-		querystring.stringify({
-			"grant_type": "password",
-			"username": credentials.username,
-			"password": credentials.password
-		})
-	)
-}
+    let querystring = require('querystring');
+    return basicAuth.post('',
+        querystring.stringify({
+            "grant_type": "password",
+            "username": credentials.username,
+            "password": credentials.password
+        })
+    );
+};
 
 export const refreshToken = (refreshToken) => {
-	var querystring = require('querystring');
-	return basicAuth.post('',
-		querystring.stringify({
-			"grant_type": "refresh_token",
-			"refresh_token": refreshToken
-		})
-	)
-}
+    let querystring = require('querystring');
+    return basicAuth.post('',
+        querystring.stringify({
+            "grant_type": "refresh_token",
+            "refresh_token": refreshToken
+        })
+    );
+};
 
