@@ -1,5 +1,6 @@
 import axios from 'axios';
 import store from '../index';
+import { logout } from "../redux/actions";
 
 const BASE_URL = process.env.REACT_APP_DOMAIN + '/api';
 
@@ -10,10 +11,22 @@ const token = () => {
     }
 };
 
-export const notChessReq = () => axios.create({
+const notChessReq = () => axios.create({
     baseURL: BASE_URL,
     headers: {'Authorization': "bearer " + token()}
 });
+
+export function* wrappedChessReq(config) {
+    try {
+        return yield notChessReq().request(config);
+    } catch (e) {
+        if (e.response && e.response.status === 401) {
+            yield store.dispatch(logout());
+            return yield {data: {}};
+        }
+        throw e;
+    }
+};
 
 const basicAuth = axios.create({
     baseURL: BASE_URL + "/oauth/token",

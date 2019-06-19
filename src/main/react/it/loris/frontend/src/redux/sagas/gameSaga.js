@@ -1,38 +1,19 @@
-import { call, put, take } from 'redux-saga/effects';
-import { notChessReq } from "../../api/notChessRequests";
+import { put, takeEvery } from 'redux-saga/effects';
+import { wrappedChessReq } from "../../api/notChessRequests";
 
 function* fetchGames(payload) {
-    const games = yield call(notChessReq().get, '/game', {params: payload});
+    const games = yield wrappedChessReq({method: 'get', url: '/game', ...payload});
     yield put({type: "FETCH_GAMES", payload: games.data});
 }
 
 function* fetchGame(payload) {
-    const game = yield call(notChessReq().get, `/game/${payload}`);
+    const game = yield wrappedChessReq({method: 'get', url: `/game/${payload}`});
     yield put({type: "FETCH_GAME", payload: game.data});
 }
 
-function selectRightRequest(type) {
-    switch (type) {
-        case "FETCH_GAMES_REQUEST":
-            return fetchGames;
-        case "FETCH_GAME_REQUEST":
-            return fetchGame;
-        default:
-            throw new Error("You fucked up types somewhere");
-    }
-}
-
 function* gameSaga() {
-    while (true) {
-        try {
-            const {payload, type} = yield take(action => /.*GAME[S]?_REQUEST.*/.test(action.type));
-            yield call(selectRightRequest(type), payload);
-        } catch (e) {
-            if (e.response && e.response.status === 401) {
-                yield put({type: "LOGOUT"});
-            }
-        }
-    }
+    yield takeEvery('FETCH_GAMES_REQUEST', fetchGames);
+    yield takeEvery('FETCH_GAME_REQUEST', fetchGame);
 }
 
 export default gameSaga;

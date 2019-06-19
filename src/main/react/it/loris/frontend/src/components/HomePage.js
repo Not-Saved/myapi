@@ -7,13 +7,13 @@ import { fetchCurrentUser } from "../redux/actions";
 
 class HomePage extends Component {
 
-    renderPage() {
+    render() {
         return (
             <Container style={{marginTop: '13vh'}}>
                 <Grid centered>
                     <Grid.Row>
                         <Header as='h1'>
-                            Welcome back, {_.startCase(_.toLower(this.props.currentUser.username))}
+                            Welcome back, {this.props.currentUser && _.startCase(_.toLower(this.props.currentUser.username))}
                         </Header>
                     </Grid.Row>
                     <Grid.Row style={{position: 'relative', top: '25px'}}>
@@ -26,10 +26,6 @@ class HomePage extends Component {
                 </Grid>
             </Container>
         );
-    }
-
-    render() {
-        return this.props.currentUser ? this.renderPage() : null;
     }
 }
 

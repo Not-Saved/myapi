@@ -1,11 +1,11 @@
-import { call, put, take, fork, cancel} from 'redux-saga/effects'
-import { accessToken} from "../../api/notChessRequests";
+import { call, put, take, fork, cancel } from 'redux-saga/effects';
+import { accessToken } from "../../api/notChessRequests";
 
 function* authorize(credentials) {
     try {
         const token = yield call(accessToken, credentials);
         yield put({type: 'LOGIN_SUCCESS', payload: token.data});
-        yield put({type: 'FETCH_CURRENT_USER_REQUEST'})
+        yield put({type: 'FETCH_CURRENT_USER_REQUEST'});
     } catch (error) {
         yield put({type: 'LOGIN_ERROR'});
     }

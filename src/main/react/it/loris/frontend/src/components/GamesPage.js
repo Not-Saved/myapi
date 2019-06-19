@@ -2,11 +2,11 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Container, Grid, Header, Icon } from "semantic-ui-react";
 
-import { fetchGames } from "../redux/actions";
+import { fetchGames, fetchCurrentUser } from "../redux/actions";
 
 class GamesPage extends Component {
 
-    renderGamesPage(){
+    render(){
         this.props.fetchGames();
         return (
             <Container style={{marginTop: '13vh'}}>
@@ -26,10 +26,6 @@ class GamesPage extends Component {
             </Container>
         );
     }
-
-    render() {
-        return this.props.isSignedIn ? this.renderGamesPage() : null;
-    }
 }
 
 const mapStateToProps = (state) => {
@@ -39,4 +35,4 @@ const mapStateToProps = (state) => {
     };
 };
 
-export default connect(mapStateToProps, {fetchGames})(GamesPage);
+export default connect(mapStateToProps, {fetchGames, fetchCurrentUser})(GamesPage);
