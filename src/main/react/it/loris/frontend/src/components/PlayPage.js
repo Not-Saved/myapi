@@ -10,8 +10,7 @@ class PlayPage extends Component {
 
     toggleVisibility = () => this.setState({visible: true});
 
-    renderPlayPage() {
-        this.props.fetchGames();
+    render() {
         return (
             <Container style={{marginTop: '13vh'}}>
                 <Grid centered>
@@ -33,10 +32,6 @@ class PlayPage extends Component {
                 </Grid>
             </Container>
         );
-    }
-
-    render() {
-        return this.props.isSignedIn ? this.renderPlayPage() : null;
     }
 }
 

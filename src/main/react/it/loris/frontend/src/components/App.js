@@ -1,6 +1,5 @@
 import React from 'react';
-import { Route, Router, Switch } from 'react-router-dom';
-
+import { Router, Switch } from 'react-router-dom';
 import { connect } from 'react-redux';
 
 import CenteredBasicModal from './CenteredBasicModal';
@@ -9,17 +8,19 @@ import history from '../history';
 import MainMenu from "./MainMenu";
 import GamesPage from "./GamesPage";
 import PlayPage from "./PlayPage";
+import PrivateRoute from "../PrivateRoute";
 
 class App extends React.Component {
     render() {
+        const {isSignedIn} = this.props;
         return (
             <Router history={history}>
-                <CenteredBasicModal open={!this.props.isSignedIn}/>
+                <CenteredBasicModal open={!isSignedIn}/>
                 <MainMenu/>
                 <Switch>
-                    <Route path="/" exact component={HomePage}/>
-                    <Route path="/games" exact component={GamesPage}/>
-                    <Route path="/play" exact component={PlayPage}/>
+                    <PrivateRoute isSignedIn={isSignedIn} path="/" exact component={HomePage}/>
+                    <PrivateRoute isSignedIn={isSignedIn} path="/games" exact component={GamesPage}/>
+                    <PrivateRoute isSignedIn={isSignedIn} path="/play" exact component={PlayPage}/>
                 </Switch>
             </Router>
         );
