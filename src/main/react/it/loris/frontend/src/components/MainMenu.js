@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { withRouter } from "react-router-dom";
-import { Container, Icon, Menu } from "semantic-ui-react";
+import { Container, Icon, Menu, Responsive } from "semantic-ui-react";
 
 import { logout } from "../redux/actions";
 
@@ -17,25 +17,24 @@ class MainMenu extends Component {
 
     render() {
         const {activeItem} = this.state;
-
         return (
             <Container style={style}>
                 <Menu pointing secondary size={"huge"} widths={4}>
                     <Menu.Item name='/' active={activeItem === '/'} onClick={this.handleItemClick}>
                         <Icon name='home' size='large'/>
-                        {renderText("Home")}
+                        <Responsive minWidth={600}>Home</Responsive>
                     </Menu.Item>
                     <Menu.Item name='/games' active={activeItem === '/games'} onClick={this.handleItemClick}>
                         <Icon name='list' size='large'/>
-                        {renderText("Games")}
+                        <Responsive minWidth={600}>Games</Responsive>
                     </Menu.Item>
                     <Menu.Item name='/play' active={activeItem === '/play'} onClick={this.handleItemClick}>
                         <Icon name='play' size='large'/>
-                        {renderText("Play")}
+                        <Responsive minWidth={600}>Play</Responsive>
                     </Menu.Item>
                     <Menu.Item onClick={this.props.logout}>
                         <Icon name='sign-out' size='large'/>
-                        {renderText("Logout")}
+                        <Responsive minWidth={600}>Logout</Responsive>
                     </Menu.Item>
                 </Menu>
             </Container>
@@ -43,9 +42,6 @@ class MainMenu extends Component {
     }
 }
 
-function renderText(name) {
-    return window.innerWidth > window.innerHeight ? name : '';
-}
 
 const style = {
     paddingTop: '1vh'

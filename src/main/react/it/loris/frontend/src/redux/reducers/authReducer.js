@@ -9,6 +9,8 @@ export default (state = INITIAL_VALUE, action) => {
     switch (action.type) {
         case 'LOGIN_REQUEST':
             return {...state, isPending: true};
+        case 'LOG_BACK_IN_REQUEST':
+            return {...state, isPending: true};
         case 'LOGIN_SUCCESS':
             return {...state, isPending: false, isSignedIn: true, tokenObject: action.payload};
         case 'LOGIN_ERROR':
