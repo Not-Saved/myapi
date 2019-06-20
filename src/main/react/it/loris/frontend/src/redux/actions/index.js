@@ -6,8 +6,16 @@ export const login = credentials => {
 };
 
 export const logout = () => {
+    localStorage.removeItem("refresh_token");
     return {
         type: 'LOGOUT'
+    };
+};
+
+export const refresh = (lastFailedAction) => {
+    return {
+        type: 'LOG_BACK_IN_REQUEST',
+        lastFailedAction: lastFailedAction
     };
 };
 
@@ -34,12 +42,12 @@ export const fetchGames = (payload) => {
     return {
         type: 'FETCH_GAMES_REQUEST',
         payload: payload
-    }
-}
+    };
+};
 
 export const fetchGame = (payload) => {
     return {
         type: 'FETCH_GAME_REQUEST',
         payload: payload
-    }
-}
+    };
+};

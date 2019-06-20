@@ -1,18 +1,18 @@
 import { put, takeEvery } from 'redux-saga/effects';
 import { wrappedChessReq } from "../../api/notChessRequests";
 
-function* fetchUsers() {
-    const users = yield wrappedChessReq({method: 'get', url: '/user'});
+function* fetchUsers(action) {
+    const users = yield wrappedChessReq({method: 'get', url: '/user'}, action);
     yield put({type: "FETCH_USERS", payload: users.data});
 }
 
-function* fetchUser(payload) {
-    const user = yield wrappedChessReq({method: 'get', url: `/user/${payload}`});
+function* fetchUser(action) {
+    const user = yield wrappedChessReq({method: 'get', url: `/user/${action.payload}`}, action);
     yield put({type: "FETCH_USER", payload: user.data});
 }
 
-function* fetchCurrentUser() {
-    const currentUser = yield wrappedChessReq({method: 'get', url: '/user/me'});
+function* fetchCurrentUser(action) {
+    const currentUser = yield wrappedChessReq({method: 'get', url: '/user/me'}, action);
     yield put({type: "FETCH_CURRENT_USER", payload: currentUser.data});
 }
 

@@ -1,13 +1,13 @@
 import { put, takeEvery } from 'redux-saga/effects';
 import { wrappedChessReq } from "../../api/notChessRequests";
 
-function* fetchGames(payload) {
-    const games = yield wrappedChessReq({method: 'get', url: '/game', ...payload});
+function* fetchGames(action) {
+    const games = yield wrappedChessReq({method: 'get', url: '/game', ...action.payload}, action);
     yield put({type: "FETCH_GAMES", payload: games.data});
 }
 
-function* fetchGame(payload) {
-    const game = yield wrappedChessReq({method: 'get', url: `/game/${payload}`});
+function* fetchGame(action) {
+    const game = yield wrappedChessReq({method: 'get', url: `/game/${action.payload}`}, action);
     yield put({type: "FETCH_GAME", payload: game.data});
 }
 

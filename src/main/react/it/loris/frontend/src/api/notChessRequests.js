@@ -1,28 +1,28 @@
 import axios from 'axios';
 import store from '../index';
-import { logout } from "../redux/actions";
+import { refresh } from "../redux/actions";
 
 const BASE_URL = process.env.REACT_APP_DOMAIN + '/api';
 
-const token = () => {
+const getTokenFromStore = () => {
     if (store && store.getState().auth.isSignedIn) {
-        const {auth} = store.getState();
-        return auth.tokenObject.access_token;
+        const { auth } = store.getState();
+        return auth.tokenObject;
     }
 };
 
 const notChessReq = () => axios.create({
     baseURL: BASE_URL,
-    headers: {'Authorization': "bearer " + token()}
+    headers: { 'Authorization': "bearer " + getTokenFromStore().access_token }
 });
 
-export function* wrappedChessReq(config) {
+export function* wrappedChessReq(config, thisRequestSourceAction) {
     try {
         return yield notChessReq().request(config);
     } catch (e) {
         if (e.response && e.response.status === 401) {
-            yield store.dispatch(logout());
-            return yield {data: {}};
+            yield store.dispatch(refresh(thisRequestSourceAction));
+            return yield { data: {} };
         }
         throw e;
     }
@@ -50,7 +50,8 @@ export const accessToken = (credentials) => {
     );
 };
 
-export const refreshToken = (refreshToken) => {
+export const refreshToken = () => {
+    const refreshToken = localStorage.getItem("refresh_token") || getTokenFromStore().refresh_token;
     let querystring = require('querystring');
     return basicAuth.post('',
         querystring.stringify({
