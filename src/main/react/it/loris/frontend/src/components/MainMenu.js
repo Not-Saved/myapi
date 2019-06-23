@@ -42,7 +42,7 @@ class MainMenu extends Component {
                         <Icon name='play' size='large'/>
                         <Responsive minWidth={600}>Play</Responsive>
                     </Menu.Item>
-                    <Menu.Item onClick={this.props.logout} style={{fontWeight: "bold", fontSize: "19px"}}>
+                        <Menu.Item onClick={this.props.logout} style={{fontWeight: "bold", fontSize: "19px"}}>
                         <Icon name='sign-out' size='large'/>
                         <Responsive minWidth={600}>Logout</Responsive>
                     </Menu.Item>

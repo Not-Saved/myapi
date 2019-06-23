@@ -17,13 +17,13 @@ function GameCard({ game, history }) {
                         <Table.HeaderCell width={2} style={cellStyle}>
                             <Icon fitted name="hashtag" size="big"/>
                         </Table.HeaderCell>
-                        <Responsive as={Table.HeaderCell} minWidth={500} width={3} style={cellStyle}>
+                        <Responsive as={Table.HeaderCell} minWidth={500} width={2} style={cellStyle}>
                             <Icon fitted name="calendar" size="big"/>
                         </Responsive>
-                        <Table.HeaderCell width={2} style={cellStyle}>
+                        <Table.HeaderCell width={1} style={cellStyle}>
                             <Icon fitted name="user outline" size="big"/>
                         </Table.HeaderCell>
-                        <Table.HeaderCell width={2} style={cellStyle}>
+                        <Table.HeaderCell width={1} style={cellStyle}>
                             <Icon fitted name="user" size="big"/>
                         </Table.HeaderCell>
                         <Responsive as={Table.HeaderCell} minWidth={500} width={1} style={cellStyle}>
@@ -39,10 +39,10 @@ function GameCard({ game, history }) {
                         <Responsive as={Table.Cell} minWidth={500}>
                             {new Date(game.createdAt).toLocaleDateString()}
                         </Responsive>
-                        <Table.Cell>
+                        <Table.Cell style={{minWidth: "110px"}}>
                             {findPlayer(game.players, "WHITE")}
                         </Table.Cell>
-                        <Table.Cell>
+                        <Table.Cell style={{minWidth: "110px"}}>
                             {findPlayer(game.players, "BLACK")}
                         </Table.Cell>
                         <Responsive as={Table.Cell} minWidth={500}>
