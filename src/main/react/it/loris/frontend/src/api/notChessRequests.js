@@ -1,6 +1,6 @@
 import axios from 'axios';
 import store from '../index';
-import { refresh } from "../redux/actions";
+import { refresh } from "../redux/actions/authAction";
 
 const BASE_URL = process.env.REACT_APP_DOMAIN + '/api';
 

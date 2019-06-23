@@ -3,7 +3,7 @@ import { Form, Message, Header, Icon, Input } from 'semantic-ui-react';
 import { Field, reduxForm } from 'redux-form';
 import { connect } from 'react-redux';
 
-import { login } from '../redux/actions';
+import { login } from '../redux/actions/authAction';
 
 class LoginForm extends React.Component {
     renderInput({input, label}) {
