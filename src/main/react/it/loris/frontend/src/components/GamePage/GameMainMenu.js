@@ -30,7 +30,7 @@ function GameMainMenu(props) {
             as={Grid} fireOnMount onUpdate={handleSizeChange}
             textAlign="center"
             columns={columns}
-            style={{ marginTop: "16px" }}
+            style={{ marginTop: "2vh" }}
         >
 
             <Responsive

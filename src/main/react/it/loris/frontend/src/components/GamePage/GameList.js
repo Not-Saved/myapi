@@ -13,7 +13,16 @@ class GameList extends Component {
         this.setPageSize();
     }
 
-    handlePaginationChange = (e, { activePage }) => this.setState({ activePage });
+    componentDidUpdate(prevProps, prevState, snapshot) {
+        const gamesArray = Object.values(this.props.games);
+        if(this.state.activePage > Math.ceil(gamesArray.length / this.state.pageSize) && gamesArray[0]){
+            this.setState({activePage: 1})
+        }
+    }
+
+    handlePaginationChange = (e, { activePage }) => {
+        this.setState({ activePage });
+    }
 
     setPageSize = () => {
         this.setState({ pageSize: Math.floor((window.innerHeight * 0.70) / 130) });
@@ -27,7 +36,7 @@ class GameList extends Component {
                     <Responsive
                         fireOnMount
                         onUpdate={this.setPageSize}
-                        style={{ marginTop: "35px", marginBottom: "15px" }}
+                        style={{ marginTop: "4vh", marginBottom: "3vh" }}
                     >
                         {this.renderGameCards(gamesArray)}
                     </Responsive>
