@@ -61,10 +61,10 @@ const cellStyle = {
 };
 
 const findTurnIcon = (game) => {
-    switch (game.type) {
-        case 'ENDED':
+    switch (game.state) {
+        case "ENDED":
             return "hourglass end";
-        case 'IN_PROGRESS':
+        case "IN_PROGRESS":
             return "hourglass half";
         default:
             return "hourglass start";
