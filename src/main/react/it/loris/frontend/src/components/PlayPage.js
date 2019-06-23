@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Icon, Container, Grid, Header, Transition } from "semantic-ui-react";
 
-import { fetchGames } from "../redux/actions";
+import { fetchGames } from "../redux/actions/gameAction";
 import HeaderSubHeader from "semantic-ui-react/dist/commonjs/elements/Header/HeaderSubheader";
 
 class PlayPage extends Component {

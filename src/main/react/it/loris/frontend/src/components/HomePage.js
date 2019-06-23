@@ -3,7 +3,7 @@ import { Container, Grid, Header, Icon } from 'semantic-ui-react';
 import { connect } from 'react-redux';
 import _ from 'lodash';
 
-import { fetchCurrentUser } from "../redux/actions";
+import { fetchCurrentUser } from "../redux/actions/userAction";
 
 class HomePage extends Component {
 

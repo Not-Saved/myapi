@@ -1,39 +1,32 @@
-import React, { useEffect, useState } from 'react';
-import { connect } from "react-redux";
-import { fetchGames } from "../../redux/actions";
-import { Checkbox, Dropdown, Grid, Header } from "semantic-ui-react";
+import React, { useEffect } from 'react';
+
+import { Checkbox, Dropdown, Header } from "semantic-ui-react";
 
 function GameStateFilter(props) {
-    const [ state, setState ] = useState(stateOptions[0].value);
-    const [ mine, setMine ] = useState(false);
 
     useEffect(() => {
-        const params = { state: state === 'ALL' ? null : state, mine: mine };
-        props.fetchGames({
-            params: params
-        });
-    }, [ props, state, mine ]);
+        props.setState(stateOptions[0].value);
+    }, []);
 
     return (
-        <Grid doubling columns={3} verticalAlign="middle">
-            <Grid.Column>
-                <Dropdown
-                    floating
-                    pointing="top"
-                    header={<Header icon="chess board" content="Show games:"/>}
-                    options={stateOptions}
-                    onChange={(e, { value }) => setState(value)}
-                    value={state}
-                />
-            </Grid.Column>
-            <Grid.Column>
-                <Checkbox
-                    label="My games"
-                    onChange={() => setMine(!mine)}
-                    style={{ fontSize: '16px' }}
-                />
-            </Grid.Column>
-        </Grid>
+        <div style={{ height: "100%", display: "flex", alignItems: "center", justifyContent: "center" }}>
+            <Dropdown
+                disabled={props.disabled}
+                floating
+                pointing="top left"
+                header={<Header style={{ fontSize: "14px" }} icon="chess" content="Show games:"/>}
+                options={stateOptions}
+                onChange={(e, { value }) => props.setState(value)}
+                value={props.state}
+                style={{ marginRight: "15%", fontSize: "18px", fontWeight: "bold" }}
+            />
+            <Checkbox
+                disabled={props.disabled}
+                label="My games"
+                onChange={() => props.setMine(!props.mine)}
+                style={{ fontSize: "18px", fontWeight: "bold" }}
+            />
+        </div>
     );
 }
 
@@ -60,4 +53,4 @@ const stateOptions = [
     }
 ];
 
-export default connect(null, { fetchGames })(GameStateFilter);
+export default GameStateFilter;

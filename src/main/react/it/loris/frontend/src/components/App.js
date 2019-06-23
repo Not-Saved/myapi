@@ -10,7 +10,7 @@ import GamesPage from "./GamePage/GamesPage";
 import PlayPage from "./PlayPage";
 import PrivateRoute from "../PrivateRoute";
 
-import { refresh } from "../redux/actions";
+import { refresh } from "../redux/actions/authAction";
 
 class App extends React.Component {
 

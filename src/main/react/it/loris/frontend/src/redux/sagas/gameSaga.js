@@ -7,8 +7,13 @@ function* fetchGames(action) {
 }
 
 function* fetchGame(action) {
-    const game = yield wrappedChessReq({method: 'get', url: `/game/${action.payload}`}, action);
-    yield put({type: "FETCH_GAME", payload: game.data});
+    try{
+        const game = yield wrappedChessReq({method: 'get', url: `/game/${action.payload} `}, action);
+        yield put({type: "FETCH_GAME", payload: game.data});
+    } catch (e) {
+        console.log(e)
+    }
+
 }
 
 function* gameSaga() {
