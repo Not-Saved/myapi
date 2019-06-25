@@ -15,11 +15,11 @@ function GameSearch(props) {
         <Input
             value={props.searchValue}
             onChange={handleSearchValueChange}
-
+            transparent
             icon="search"
             placeholder='Search game ID...'
-            transparent
-            style={{ height: "100%", width: "65%", fontSize: "18px" }}
+
+            style={{ fontSize: "18px", textAlign: "center" }}
         />
     );
 }
