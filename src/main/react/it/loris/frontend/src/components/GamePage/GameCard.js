@@ -1,34 +1,66 @@
 import React from 'react';
-import { Button, Icon, Label, Responsive, Segment, Table } from "semantic-ui-react";
+import { Button, Icon, Label, Segment, Table } from "semantic-ui-react";
 import _ from "lodash";
 import { withRouter } from 'react-router-dom';
 
 function GameCard({ game, history }) {
+
+    const renderPlayer = (players, color) => {
+        if (players.filter(player => player.color === color)[0]) {
+            return (
+                <Label style={{ height: "30px", margin: "0px", fontSize: "14px", fontWeight: "bold" }}>
+                    {_.startCase(_.toLower(players.filter(player => player.color === color)[0].username))}
+                </Label>
+            );
+        } else {
+            return (
+                <Button
+                    basic
+                    compact
+                    size="small"
+                    icon="plus"
+                    content="Join"
+                    onClick={(e) => {
+                        history.push(`/game/${game.id}`);
+                        e.stopPropagation();
+                    }}
+                    style={{ height: "30px", margin: "0px", fontSize: "14px", fontWeight: "bold" }}
+                />
+            );
+        }
+    };
+
     return (
         <Segment
             piled
-            onClick={() => history.push(`/game/${game.id}`)}
-            style={{ padding: "0px" }}
+            style={{ padding: "6px" }}
         >
-            <Table style={{ padding: "1px" }} compact='very' unstackable basic textAlign="center"
-                   verticalAlign="middle">
+            <Table
+                unstackable
+                basic
+                compact='very'
+                textAlign="center"
+                verticalAlign="middle"
+                style={{ border: "0px" }}
+                onClick={() => history.push("/")}
+            >
                 <Table.Header>
                     <Table.Row>
-                        <Table.HeaderCell width={2} style={cellStyle}>
+                        <Table.HeaderCell width={1} style={headerCellStyle}>
                             <Icon fitted name="hashtag" size="big"/>
                         </Table.HeaderCell>
-                        <Responsive as={Table.HeaderCell} minWidth={500} width={2} style={cellStyle}>
+                        <Table.HeaderCell width={3} style={headerCellStyle}>
                             <Icon fitted name="calendar" size="big"/>
-                        </Responsive>
-                        <Table.HeaderCell width={1} style={cellStyle}>
+                        </Table.HeaderCell>
+                        <Table.HeaderCell width={1} style={headerCellStyle}>
                             <Icon fitted name="user outline" size="big"/>
                         </Table.HeaderCell>
-                        <Table.HeaderCell width={1} style={cellStyle}>
+                        <Table.HeaderCell width={1} style={headerCellStyle}>
                             <Icon fitted name="user" size="big"/>
                         </Table.HeaderCell>
-                        <Responsive as={Table.HeaderCell} minWidth={500} width={1} style={cellStyle}>
+                        <Table.HeaderCell width={1} style={headerCellStyle}>
                             <Icon fitted name={findTurnIcon(game)} size="big"/>
-                        </Responsive>
+                        </Table.HeaderCell>
                     </Table.Row>
                 </Table.Header>
                 <Table.Body style={{ fontSize: "16px", fontWeight: "bold" }}>
@@ -36,18 +68,18 @@ function GameCard({ game, history }) {
                         <Table.Cell>
                             {game.id}
                         </Table.Cell>
-                        <Responsive as={Table.Cell} minWidth={500}>
+                        <Table.Cell>
                             {new Date(game.createdAt).toLocaleDateString()}
-                        </Responsive>
-                        <Table.Cell style={{minWidth: "110px"}}>
-                            {findPlayer(game.players, "WHITE")}
                         </Table.Cell>
-                        <Table.Cell style={{minWidth: "110px"}}>
-                            {findPlayer(game.players, "BLACK")}
+                        <Table.Cell style={{ minWidth: "105px" }}>
+                            {renderPlayer(game.players, "WHITE")}
                         </Table.Cell>
-                        <Responsive as={Table.Cell} minWidth={500}>
+                        <Table.Cell style={{ minWidth: "105px" }}>
+                            {renderPlayer(game.players, "BLACK")}
+                        </Table.Cell>
+                        <Table.Cell>
                             {game.turn}
-                        </Responsive>
+                        </Table.Cell>
                     </Table.Row>
                 </Table.Body>
             </Table>
@@ -55,9 +87,9 @@ function GameCard({ game, history }) {
     );
 }
 
-const cellStyle = {
+const headerCellStyle = {
     border: "0px",
-    paddingBottom: "5px"
+    paddingBottom: "5px",
 };
 
 const findTurnIcon = (game) => {
@@ -68,22 +100,6 @@ const findTurnIcon = (game) => {
             return "hourglass half";
         default:
             return "hourglass start";
-    }
-};
-
-const findPlayer = (players, color) => {
-    if (players.filter(player => player.color === color)[0]) {
-        return (
-            <Label style={{ height: "30px", margin: "0px", fontSize: "14px", fontWeight: "bold" }}>
-                {_.startCase(_.toLower(players.filter(player => player.color === color)[0].username))}
-            </Label>
-        );
-    } else {
-        return (
-            <Button compact size="small" basic
-                    style={{ height: "30px", margin: "0px", fontSize: "14px", fontWeight: "bold" }} icon="plus"
-                    content="Join"/>
-        );
     }
 };
 
